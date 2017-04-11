@@ -34,11 +34,13 @@ class BranchAndBoundTree:
 
         if len(lonely_nodes) == 0:
             self.done = 1
+            #print("Lower Bound", node_with_lowest_bound.lower_bound)
             return node_with_lowest_bound
         else:
             #print("Lonely Nodes ", lonely_nodes)
             node_with_lowest_bound.construct_children_nodes(np.random.choice(list(lonely_nodes)))
             self.all_nodes += node_with_lowest_bound.children
+            print("Lower Bound", node_with_lowest_bound.lower_bound)
             return None
 
     def all_steps(self):
@@ -46,7 +48,7 @@ class BranchAndBoundTree:
         final_node = None
         i = 1
         while not self.done:
-            #print("\n Step #", i)
+            print("Step", i)
             final_node = self.step()
             i += 1
         return final_node

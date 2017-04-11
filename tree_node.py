@@ -10,8 +10,8 @@ def minimum_isolating_cut(G, source_nodes, sink_nodes):
     G_prime = G.copy()
     G_prime.add_nodes_from(['s', 't'])
     # no 'capacity' attribute implies infinite capacity
-    G_prime.add_edges_from([('s', source_adj_node) for source_adj_node in source_nodes], capacity=100)
-    G_prime.add_edges_from([(sink_adj_node, 't') for sink_adj_node in sink_nodes], capacity=100)
+    G_prime.add_edges_from([('s', source_adj_node) for source_adj_node in source_nodes])
+    G_prime.add_edges_from([(sink_adj_node, 't') for sink_adj_node in sink_nodes])
     # run minimum cut
     cut_weight, (cut_source, cut_sink) = nx.minimum_cut(G_prime, 's', 't')
 
@@ -76,7 +76,7 @@ class TreeNode:
             # perform actions
             self.expand_source_set()
             self.lower_bound = self._calculate_lower_bound()
-            self.upper_bound = self._calculate_upper_bound()
+            #self.upper_bound = self._calculate_upper_bound()
 
             #print("Expanded Source Sets: ", self.contained_sets)
             #print("New Cut Values: ", self.iso_cut_weights)
@@ -108,9 +108,3 @@ class TreeNode:
 
         #print("Iso Cut Weights ", self.iso_cut_weights.values())
         return sum(list(self.iso_cut_weights.values())) / 2
-
-    def _calculate_upper_bound(self):
-
-        # todo
-
-        return sum(list(self.iso_cut_weights.values()))
