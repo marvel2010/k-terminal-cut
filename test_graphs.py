@@ -17,13 +17,19 @@ def main():
     print('BB Final Sets ', final_node.contained_sets)
     print('BB Final Value ', final_node.lower_bound)
     print('BB Time ', round(t2-t1, 2))
-    print("\n\n\n")
+    print("\n")
 
     ip_algorithm(G, terminals)
 
 
 def test_random_graph():
     G = nx.gnp_random_graph(1000, 0.01)
+    #G = nx.random_lobster(1000, 0.1, 0.1)
+    #G = nx.random_powerlaw_tree(1000)
+    #G = nx.powerlaw_cluster_graph(1000, 10, 0.1)
+    #G = nx.barabasi_albert_graph(20, 3)
+    #G = nx.connected_watts_strogatz_graph(1000, 10, 0.1)
+    #G = nx.newman_watts_strogatz_graph(1000, 10, 0.1)
     for edge in G.edges_iter():
         G[edge[0]][edge[1]]['capacity'] = 1
     return G, [0, 1, 2, 3]
