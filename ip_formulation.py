@@ -19,8 +19,8 @@ def ip_algorithm(G, terminals):
     # node i, node j
     for i in G.nodes():
         z_variables[i] = {}
-        for j in G.nodes():
-            z_variables[i][j] = m.addVar(vtype=GRB.BINARY, obj=1, name="Node %s, Node %s" % (i, j))
+        for j in G[i]:
+            z_variables[i][j] = m.addVar(vtype=GRB.BINARY, obj=G[i][j]['capacity'], name="Node %s, Node %s" % (i, j))
 
     m.modelSense = GRB.MINIMIZE
     m.update()
@@ -47,9 +47,10 @@ def ip_algorithm(G, terminals):
     # print solution
     print("Total Utility: ", m.objVal)
     print("Solution")
+    solution_final = {terminal: set() for terminal in terminals}
     for i in G.nodes():
         for k in terminals:
             if x_variables[i][k].x == 1.0:
-                print(i, ' with terminal ', k)
-
+                solution_final[k].add(i)
+    print(solution_final)
     return 0

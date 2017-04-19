@@ -23,32 +23,65 @@ class BranchAndBoundTree:
 
         #self.root_node = root_node
         self.all_nodes = [root_node]
+        self.global_lower_bound = 0.0
         self.done = 0
+        self.node_with_lowest_bound = None
+        self.lonely_nodes = None
 
     def step(self):
 
         self.all_nodes.sort(key=lambda x: x.lower_bound, reverse=True)
-        node_with_lowest_bound = self.all_nodes.pop()
+        self.node_with_lowest_bound = self.all_nodes.pop()
 
-        lonely_nodes = node_with_lowest_bound.find_lonely_nodes()
+        #print("All Nodes Length", len(self.all_nodes))
+        #print("All Nodes", [node.lower_bound for node in self.all_nodes])
 
-        if len(lonely_nodes) == 0:
+        self.lonely_nodes = self.node_with_lowest_bound.find_lonely_nodes()
+
+        if len(self.lonely_nodes) == 0:
             self.done = 1
-            #print("Lower Bound", node_with_lowest_bound.lower_bound)
-            return node_with_lowest_bound
+            return self.node_with_lowest_bound
         else:
-            #print("Lonely Nodes ", lonely_nodes)
-            node_with_lowest_bound.construct_children_nodes(np.random.choice(list(lonely_nodes)))
-            self.all_nodes += node_with_lowest_bound.children
-            print("Lower Bound", node_with_lowest_bound.lower_bound)
+            #lonely_node_chosen = self._choose_lonely_node_random()
+            #lonely_node_chosen = self._choose_lonely_node_farthest()
+            lonely_node_chosen = self._choose_lonely_node_highest_degree()
+            self.node_with_lowest_bound.construct_children_nodes(lonely_node_chosen)
+            self.all_nodes += self.node_with_lowest_bound.children
+            assert self.node_with_lowest_bound.lower_bound >= self.global_lower_bound, 'lower bound issue: lowest so far %s now %s' % (self.global_lower_bound, node_with_lowest_bound.lower_bound)
+            self.global_lower_bound = self.node_with_lowest_bound.lower_bound
+            # print status
+            print("Lonely Node Chosen", lonely_node_chosen)
+            print("Lower Bound", self.node_with_lowest_bound.lower_bound)
+            print("Contained Sets", self.node_with_lowest_bound.contained_sets)
+            print("Lonely Node Count", len(self.lonely_nodes))
             return None
+
+    def _choose_lonely_node_random(self):
+        return np.random.choice(list(self.lonely_nodes))
+
+    def _choose_lonely_node_farthest(self):
+        used_nodes = set(self.node_with_lowest_bound.graph) - self.lonely_nodes
+        shortest_distances = {node: len(self.node_with_lowest_bound.graph) for node in self.node_with_lowest_bound.graph}
+        for used_node in used_nodes:
+            these_shortest_distances = nx.shortest_path_length(self.node_with_lowest_bound.graph, target=used_node)
+            for node in self.node_with_lowest_bound.graph:
+                shortest_distances[node] = min(shortest_distances[node], these_shortest_distances[node])
+        #print('Shortest Distances', shortest_distances)
+        return max(shortest_distances, key=shortest_distances.get)
+
+    def _choose_lonely_node_highest_degree(self):
+        degrees = nx.degree(self.node_with_lowest_bound.graph, weight='capacity')
+        degrees_restricted = {node: node_degree for node, node_degree in degrees.items() if node in self.lonely_nodes}
+        print('Degrees Restricted', degrees_restricted)
+        return max(degrees_restricted, key=degrees_restricted.get)
 
     def all_steps(self):
 
         final_node = None
         i = 1
         while not self.done:
-            print("Step", i)
+            print("Expanding Node Step", i)
             final_node = self.step()
             i += 1
+            print()
         return final_node

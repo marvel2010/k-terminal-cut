@@ -1,5 +1,6 @@
 from branch_and_bound import branch_and_bound_algorithm
 from ip_formulation import ip_algorithm
+import random
 import time
 import networkx as nx
 
@@ -8,6 +9,12 @@ def main():
 
     G, terminals = test_random_graph()
     #G, terminals = test_small_graph()
+
+    assert nx.is_connected(G), 'graph not connected'
+
+    #print(nx.get_edge_attributes(G, 'capacity'))
+    #print(nx.degree(G, weight='capacity'))
+    print()
 
     t1 = time.time()
     final_node = branch_and_bound_algorithm(G, terminals)
@@ -19,19 +26,22 @@ def main():
     print('BB Time ', round(t2-t1, 2))
     print("\n")
 
+    t3 = time.time()
     ip_algorithm(G, terminals)
+    t4 = time.time()
+    print('IP Time ', round(t4-t3, 2))
 
 
 def test_random_graph():
-    G = nx.gnp_random_graph(1000, 0.01)
+    #G = nx.gnp_random_graph(1000, 0.01)
     #G = nx.random_lobster(1000, 0.1, 0.1)
     #G = nx.random_powerlaw_tree(1000)
     #G = nx.powerlaw_cluster_graph(1000, 10, 0.1)
-    #G = nx.barabasi_albert_graph(20, 3)
+    G = nx.barabasi_albert_graph(10000, 3)
     #G = nx.connected_watts_strogatz_graph(1000, 10, 0.1)
     #G = nx.newman_watts_strogatz_graph(1000, 10, 0.1)
     for edge in G.edges_iter():
-        G[edge[0]][edge[1]]['capacity'] = 1
+        G[edge[0]][edge[1]]['capacity'] = 0.1 + random.random()
     return G, [0, 1, 2, 3]
 
 
