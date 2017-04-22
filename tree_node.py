@@ -63,13 +63,13 @@ class TreeNode:
             self.contained_sets = {}
             self.iso_cut_weights = {}
 
-            for i in range(len(in_terminals)):
+            for terminal in in_terminals:
 
                 cut_source, cut_weight = minimum_isolating_cut(self.graph,
-                                                               {in_terminals[i]},
-                                                               set(in_terminals)-{in_terminals[i]})
-                self.contained_sets[i] = cut_source - {'s'}
-                self.iso_cut_weights[i] = cut_weight
+                                                               {terminal},
+                                                               set(in_terminals)-{terminal})
+                self.contained_sets[terminal] = cut_source - {'s'}
+                self.iso_cut_weights[terminal] = cut_weight
 
             self.lower_bound = sum(self.iso_cut_weights.values()) / 2
 
@@ -116,8 +116,8 @@ class TreeNode:
 
     def construct_children_nodes(self, lonely_node):
         assert len(self.children) == 0, 'children already created'
-        for i in range(len(self.contained_sets)):
-            self._add_child(new_node=lonely_node, new_source_set=i)
+        for terminal in self.contained_sets.keys():
+            self._add_child(new_node=lonely_node, new_source_set=terminal)
 
     def find_lonely_nodes(self):
         lonely_nodes = set(self.graph.nodes()) - set(chain.from_iterable(self.contained_sets.values()))
@@ -129,7 +129,7 @@ class TreeNode:
             minimum_isolating_cut(self.graph,
                                   source_nodes=self.contained_sets[self.new_source_set],
                                   sink_nodes=set(chain.from_iterable([self.contained_sets[index]
-                                              for index in range(len(self.contained_sets))
+                                              for index in self.contained_sets.keys()
                                               if index != self.new_source_set]))
                                   )
 

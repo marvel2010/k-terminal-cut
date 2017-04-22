@@ -28,7 +28,7 @@ def ip_algorithm(G, terminals):
     # CONSTRAINT
     # one terminal per node
     for i in G.nodes():
-        m.addConstr(quicksum(x_variables[i][k] for k in terminals) == 1, "CtrNode %s" % i)
+        m.addConstr(quicksum(x_variables[i][k] for k in terminals) == 1, "CtrNode %s" % str(i))
 
     # CONSTRAINT
     # price for cut
