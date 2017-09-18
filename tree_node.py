@@ -5,6 +5,7 @@ from copy import deepcopy
 import networkx as nx
 from minimum_isolating_cut import minimum_isolating_cut
 
+
 class TreeNode:
     """Node in the branch-and-bound tree for multi-terminal cut.
 

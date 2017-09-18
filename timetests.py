@@ -3,7 +3,7 @@
 import random
 import cProfile
 import networkx as nx
-from branch_and_bound_tree import branch_and_bound_algorithm
+from branch_and_bound_formulation import branch_and_bound_algorithm
 from ip_formulation import ip_algorithm
 
 
