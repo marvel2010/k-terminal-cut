@@ -20,6 +20,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value, 8)
+        _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
+        self.assertEqual(cut_value, 8)
 
     def test_graph_2(self):
         """graph with LP 7.5, IP 8"""
@@ -94,8 +96,24 @@ class TestGraphs(unittest.TestCase):
     #                          for a in itertools.combinations(terminals, subset_sizes)
     #                          for b in itertools.combinations(terminals, subset_sizes)
     #                          if len(set(a) & set(b)) == agreement], capacity=1)
-    #    partition, cut_value = branch_and_bound_algorithm(graph, terminals)
+    #    _, cut_value = branch_and_bound_algorithm(graph, terminals)
     #    self.assertEqual(cut_value, 110)
+
+    def test_graph_6(self):
+        # gadget used to prove NP-completeness in original paper
+        # graph with LP 27, IP 27
+        graph = nx.Graph()
+        terminals = [1, 5, 9]
+        graph.add_nodes_from(range(1, 10))
+        graph.add_edges_from([(2, 3), (2, 8), (3, 6), (4, 6), (4, 7), (7, 8)], capacity=1)
+        graph.add_edges_from([(1, 2), (1, 3), (1, 4), (1, 7), (2, 5), (3, 9),
+                              (4, 5), (5, 6), (5, 8), (6, 9), (7, 9), (8, 9)], capacity=4)
+        _, cut_value = branch_and_bound_algorithm(graph, terminals)
+        self.assertEqual(cut_value, 27)
+        _, cut_value = ip_algorithm(graph, terminals)
+        self.assertEqual(cut_value, 27)
+        _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
+        self.assertEqual(cut_value, 27)
 
 if __name__ == '__main__':
     unittest.main()
