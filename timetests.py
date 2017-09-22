@@ -4,18 +4,22 @@ import random
 import cProfile
 import networkx as nx
 from branch_and_bound_formulation import branch_and_bound_algorithm
-from ip_formulation import ip_algorithm
 
 
 def main():
+    """
+    cProfile for branch_and_bound_algorithm
+    """
 
     graph, terminals = create_random_graph('barabasi_albert', 10000)
 
     assert nx.is_connected(graph), 'graph not connected'
 
-    cProfile.runctx("branch_and_bound_algorithm(graph, terminals)", {'branch_and_bound_algorithm': branch_and_bound_algorithm,
-                                                                     'graph': graph,
-                                                                     'terminals': terminals}, {})
+    variable_specifications = {'branch_and_bound_algorithm': branch_and_bound_algorithm,
+                               'graph': graph,
+                               'terminals': terminals}
+
+    cProfile.runctx("branch_and_bound_algorithm(graph, terminals)", variable_specifications, {})
 
 
 def create_random_graph(model_name, node_count):

@@ -102,7 +102,8 @@ def ip_algorithm(graph, terminals, relaxation=False, dual=False):
         assert relaxation, 'get only get dual of LP relaxation'
         for constraint in mdl.getConstrs():
             if constraint.getAttr("Pi") != 0.0:
-                print('value of constraint %s, is %s' % (constraint.constrName, constraint.getAttr("Pi")))
+                print('value of constraint %s, is %s' % (constraint.constrName,
+                                                         constraint.getAttr("Pi")))
 
     # print solution
     source_sets = {terminal: set() for terminal in terminals}

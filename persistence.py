@@ -6,11 +6,26 @@ from ip_formulation import ip_algorithm
 
 
 def main():
+    """Constructs a desired random graph and tests weak persistence on it."""
     graph, terminals = create_random_graph('barabasi_albert', 100)
     test_weak_persistence(graph, terminals)
 
 
 def test_weak_persistence(graph, terminals):
+    """Tests for WEAK persistence in graph with terminals
+
+    WEAK persistence means that values which are 1 in the LP relaxation remain 1 in
+    an optimal IP solution. STRONG persistence means that values which are 1 or 0 in
+    the LP relaxation remain 1 or 0 (respectively) in an optimal IP solution.
+
+    Args:
+        graph: the graph for testing weak persistence
+        terminals: the vertices in the graph which are terminals
+
+    Returns:
+        unseeded_value: the branch-and-bound optimal without any 1s fixed in advance
+        seeded_value: the branc-and-bound optimal with LP 1s fixed in advance
+    """
 
     _, unseeded_value = branch_and_bound_algorithm(graph,
                                                    terminals)

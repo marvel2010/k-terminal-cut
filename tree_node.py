@@ -2,7 +2,6 @@
 
 from itertools import chain
 from copy import deepcopy
-import networkx as nx
 from minimum_isolating_cut import minimum_isolating_cut
 
 

@@ -105,8 +105,10 @@ class TestGraphs(unittest.TestCase):
     #    self.assertEqual(cut_value, 110)
 
     def test_graph_6(self):
-        # gadget used to prove NP-completeness in original paper
-        # graph with LP 27, IP 27
+        """
+        gadget used to prove NP-completeness in original paper
+        graph with LP 27, IP 27
+        """
         graph = nx.Graph()
         terminals = [1, 5, 9]
         graph.add_nodes_from(range(1, 10))

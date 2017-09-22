@@ -6,6 +6,15 @@ from tree_node import TreeNode
 
 
 class BranchAndBoundTree:
+    """Tree for multi-terminal cut
+
+    Attributes:
+        all_nodes
+        global_lower_bound
+        done
+        node_with_lowest_bound
+        lonely_nodes
+    """
 
     def __init__(self, graph, terminals, terminal_sets=None):
 
