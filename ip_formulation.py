@@ -5,7 +5,7 @@ from gurobipy import GRB
 from gurobipy import quicksum
 
 
-def ip_algorithm(graph, terminals, relaxation=False):
+def ip_algorithm(graph, terminals, relaxation=False, dual=False):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     Vertex Variables: x_i^k for each vertex i for each set k
@@ -28,6 +28,7 @@ def ip_algorithm(graph, terminals, relaxation=False):
 
     mdl = Model("MultiTerminalCuts")
 
+    # VARIABLES
     x_variables = {}
     z_variables = {}
 
@@ -64,25 +65,44 @@ def ip_algorithm(graph, terminals, relaxation=False):
     mdl.modelSense = GRB.MINIMIZE
     mdl.update()
 
+    # CONSTRAINTS
+    c_nodes = {}
+    c_edges = {}
+    c_terminals = {}
+
     # CONSTRAINT: one terminal per node
     for i in graph.nodes():
-        mdl.addConstr(quicksum(x_variables[i][k] for k in terminals) == 1.0, "CtrNode %s" % str(i))
+        c_nodes[i] = mdl.addConstr(quicksum(x_variables[i][k] for k in terminals) == 1.0,
+                                   "CtrNode %s" % str(i))
 
     # CONSTRAINT: price for cut
     for (i, j) in graph.edges():
+        c_edges[(i, j)] = {}
+        c_edges[(j, i)] = {}
         for k in terminals:
-            mdl.addConstr(z_variables[i][j][k] >= x_variables[i][k] - x_variables[j][k],
-                          name="Z1 %s %s %s" % (i, j, k))
-            mdl.addConstr(z_variables[i][j][k] >= x_variables[j][k] - x_variables[i][k],
-                          name="Z2 %s %s %s" % (i, j, k))
+            c_edges[(i, j)][k] = (
+                mdl.addConstr(z_variables[i][j][k] >= x_variables[i][k] - x_variables[j][k],
+                              name="flow %s %s %s" % (i, j, k))
+            )
+            c_edges[(j, i)][k] = (
+                mdl.addConstr(z_variables[i][j][k] >= x_variables[j][k] - x_variables[i][k],
+                              name="flow %s %s %s" % (j, i, k))
+            )
 
-    # INITIALIZE
+    # CONSTRAINT: initialize
     for k in terminals:
-        mdl.addConstr(x_variables[k][k] == 1.0, name="Init %s" % k)
+        c_terminals[k] = mdl.addConstr(x_variables[k][k] == 1.0, name="Init %s" % k)
 
     # solve
     mdl.Params.LogToConsole = 0
     mdl.optimize()
+
+    # dual variables
+    if dual:
+        assert relaxation, 'get only get dual of LP relaxation'
+        for constraint in mdl.getConstrs():
+            if constraint.getAttr("Pi") != 0.0:
+                print('value of constraint %s, is %s' % (constraint.constrName, constraint.getAttr("Pi")))
 
     # print solution
     source_sets = {terminal: set() for terminal in terminals}

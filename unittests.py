@@ -4,13 +4,14 @@ import unittest
 import networkx as nx
 from branch_and_bound_formulation import branch_and_bound_algorithm
 from ip_formulation import ip_algorithm
+from persistence import test_weak_persistence
 
 
 class TestGraphs(unittest.TestCase):
     """Unit tests for the branch-and-bound algorithm."""
 
     def test_graph_1(self):
-        """Graph with LP ?, IP 8"""
+        """Graph with LP 8, IP 8"""
         graph = nx.Graph()
         graph.add_nodes_from([i for i in range(1, 9)])
         graph.add_edges_from([(5, 6), (6, 7), (7, 8), (8, 5)], capacity=2)
@@ -22,6 +23,7 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 8)
+        test_weak_persistence(graph, terminals)
 
     def test_graph_2(self):
         """graph with LP 7.5, IP 8"""
@@ -36,6 +38,7 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 7.5)
+        test_weak_persistence(graph, terminals)
 
     def test_graph_3(self):
         """graph with LP 24, IP 26"""
@@ -58,6 +61,7 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 26)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 24)
+        test_weak_persistence(graph, terminals)
 
     def test_graph_4(self):
         """graph with LP 26, IP 27"""
@@ -79,6 +83,7 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 27)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 26)
+        test_weak_persistence(graph, terminals)
 
     #def test_graph_5(self):
     #    # graph with LP 105, IP 110
@@ -114,6 +119,7 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 27)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 27)
+        test_weak_persistence(graph, terminals)
 
 if __name__ == '__main__':
     unittest.main()

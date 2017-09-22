@@ -23,7 +23,9 @@ class TreeNode:
                  new_source_set=None,
                  is_root=False,
                  in_graph=None,
-                 in_terminals=None):
+                 root_terminals=None,
+                 is_intermediate=False,
+                 int_source_sets=None):
 
         if is_root:
             # assertions
@@ -31,7 +33,8 @@ class TreeNode:
             assert new_node is None
             assert new_source_set is None
             assert in_graph is not None
-            assert in_terminals is not None
+            assert root_terminals is not None
+            assert int_source_sets is None
 
             # init variables
             self.parent_node = None
@@ -40,14 +43,15 @@ class TreeNode:
             self.source_sets = {}
             self.iso_cut_weights = {}
 
-            for terminal in in_terminals:
+            for terminal in root_terminals:
                 self.source_sets[terminal] = set()
                 self.source_sets[terminal].add(terminal)
 
             # run expansion
-            for terminal in in_terminals:
+            for terminal in root_terminals:
                 self._expand_source_set(terminal)
 
+            # run checks
             for terminal in self.source_sets:
                 # check that every terminal set contains its terminal
                 assert terminal in self.source_sets[terminal], ' init without contained terminals '
@@ -57,13 +61,34 @@ class TreeNode:
                         assert (len(self.source_sets[terminal]
                                     & self.source_sets[terminal2]) == 0), ' init with overlap '
 
+        elif is_intermediate:
+            # assertions
+            assert parent_node is None
+            assert new_node is None
+            assert new_source_set is None
+            assert in_graph is not None
+            assert root_terminals is not None
+            assert int_source_sets is not None
+
+            # init variables
+            self.parent_node = None
+            self.children = []
+            self.graph = in_graph
+            self.source_sets = int_source_sets
+
+            # run expansion
+            self.iso_cut_weights = {}
+            for terminal in root_terminals:
+                self._expand_source_set(terminal)
+
         else:
             # assertions
             assert parent_node is not None
             assert new_node is not None
             assert new_source_set is not None
             assert in_graph is None
-            assert in_terminals is None
+            assert root_terminals is None
+            assert int_source_sets is None
 
             # init variables
             self.parent_node = parent_node
@@ -75,6 +100,8 @@ class TreeNode:
             # run expansion
             self.source_sets[new_source_set].add(new_node)
             self._expand_source_set(new_source_set)
+
+            # run checks
             assert (self.source_sets[new_source_set]
                     > self.parent_node.source_sets[new_source_set]), ' subset problem '
 

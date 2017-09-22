@@ -7,17 +7,34 @@ from tree_node import TreeNode
 
 class BranchAndBoundTree:
 
-    def __init__(self, graph, terminals):
+    def __init__(self, graph, terminals, terminal_sets=None):
 
-        root_node = TreeNode(is_root=True,
-                             in_graph=graph,
-                             in_terminals=terminals)
+        if terminal_sets is not None:
+            root_node = BranchAndBoundTree._construct_intermediate_node(graph,
+                                                                        terminals,
+                                                                        terminal_sets)
+        else:
+            root_node = BranchAndBoundTree._construct_root_node(graph,
+                                                                terminals)
 
         self.all_nodes = [root_node]
         self.global_lower_bound = 0.0
         self.done = False
         self.node_with_lowest_bound = None
         self.lonely_nodes = None
+
+    @staticmethod
+    def _construct_root_node(graph, terminals):
+        return TreeNode(is_root=True,
+                        in_graph=graph,
+                        root_terminals=terminals)
+
+    @staticmethod
+    def _construct_intermediate_node(graph, terminals, terminal_sets):
+        return TreeNode(is_intermediate=True,
+                        in_graph=graph,
+                        root_terminals=terminals,
+                        int_source_sets=terminal_sets)
 
     def _step(self):
         """One step of the branch-and-bound algorithm.

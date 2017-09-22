@@ -3,7 +3,7 @@
 from branch_and_bound_tree import BranchAndBoundTree
 
 
-def branch_and_bound_algorithm(graph, terminals):
+def branch_and_bound_algorithm(graph, terminals, terminal_sets=None):
     """Wrapper for solving the branch_and_bound algorithm for a given graph and terminals.
 
     The multi-terminal cut partitions the graph into sets such that each partition
@@ -17,5 +17,7 @@ def branch_and_bound_algorithm(graph, terminals):
         source_sets: the partition of the nodes of the graph which defines the minimum cut
         cut_value: the weight of the optimal multi-terminal cut
     """
-    branch_and_bound_tree = BranchAndBoundTree(graph, terminals)
+    branch_and_bound_tree = BranchAndBoundTree(graph,
+                                               terminals=terminals,
+                                               terminal_sets=terminal_sets)
     return branch_and_bound_tree.solve()
