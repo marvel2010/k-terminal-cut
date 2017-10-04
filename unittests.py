@@ -1,10 +1,12 @@
 """Unit tests of the branch and bound algorithm."""
 
 import unittest
+import itertools
 import networkx as nx
 from branch_and_bound_formulation import branch_and_bound_algorithm
 from ip_formulation import ip_algorithm
 from persistence import test_weak_persistence
+from persistence import test_strong_persistence
 
 
 class TestGraphs(unittest.TestCase):
@@ -24,6 +26,7 @@ class TestGraphs(unittest.TestCase):
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 8)
         test_weak_persistence(graph, terminals)
+        test_strong_persistence(graph, terminals)
 
     def test_graph_2(self):
         """graph with LP 7.5, IP 8"""
@@ -39,6 +42,7 @@ class TestGraphs(unittest.TestCase):
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 7.5)
         test_weak_persistence(graph, terminals)
+        test_strong_persistence(graph, terminals)
 
     def test_graph_3(self):
         """graph with LP 24, IP 26"""
@@ -62,6 +66,7 @@ class TestGraphs(unittest.TestCase):
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 24)
         test_weak_persistence(graph, terminals)
+        test_strong_persistence(graph, terminals)
 
     def test_graph_4(self):
         """graph with LP 26, IP 27"""
@@ -84,25 +89,34 @@ class TestGraphs(unittest.TestCase):
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 26)
         test_weak_persistence(graph, terminals)
+        test_strong_persistence(graph, terminals)
 
-    #def test_graph_5(self):
-    #    # graph with LP 105, IP 110
-    #    graph = nx.Graph()
-    #    terminals = range(1, 6)
-    #    subset_sizes = 3
-    #    agreement = 1
-    #    graph.add_nodes_from(terminals)
-    #    graph.add_nodes_from(itertools.combinations(terminals, subset_sizes))
-    #    graph.add_edges_from([(a, b)
-    #                          for a in terminals
-    #                          for b in itertools.combinations(terminals, subset_sizes)
-    #                          if a in set(b)], capacity=5)
-    #    graph.add_edges_from([(a, b)
-    #                          for a in itertools.combinations(terminals, subset_sizes)
-    #                          for b in itertools.combinations(terminals, subset_sizes)
-    #                          if len(set(a) & set(b)) == agreement], capacity=1)
-    #    _, cut_value = branch_and_bound_algorithm(graph, terminals)
-    #    self.assertEqual(cut_value, 110)
+    def test_graph_5(self):
+        """graph with LP 105, IP 110"""
+        graph = nx.Graph()
+        terminals = range(1, 6)
+        subset_sizes = 3
+        agreement = 1
+        graph.add_nodes_from(terminals)
+        graph.add_nodes_from(itertools.combinations(terminals, subset_sizes))
+        graph.add_edges_from([(a, b)
+                              for a in terminals
+                              for b in itertools.combinations(terminals, subset_sizes)
+                              if a in set(b)], capacity=5)
+        graph.add_edges_from([(a, b)
+                              for a in itertools.combinations(terminals, subset_sizes)
+                              for b in itertools.combinations(terminals, subset_sizes)
+                              if len(set(a) & set(b)) == agreement], capacity=1)
+        terminals_by_vertex, _ = ip_algorithm(graph,
+                                              terminals,
+                                              relaxation=True,
+                                              persistence_sets=True)
+        _, cut_value = branch_and_bound_algorithm(graph,
+                                                  terminals,
+                                                  terminals_by_vertex=terminals_by_vertex)
+        self.assertEqual(cut_value, 110)
+        _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
+        self.assertEqual(cut_value, 110)
 
     def test_graph_6(self):
         """
@@ -122,6 +136,7 @@ class TestGraphs(unittest.TestCase):
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 27)
         test_weak_persistence(graph, terminals)
+        test_strong_persistence(graph, terminals)
 
 if __name__ == '__main__':
     unittest.main()

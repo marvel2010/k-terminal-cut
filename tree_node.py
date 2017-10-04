@@ -148,10 +148,10 @@ class TreeNode:
                                                 )
                                  )
 
-    def construct_children_nodes(self, lonely_node):
+    def construct_children_nodes(self, lonely_node, allowed_terminals):
         """Runs _add_child for each possible source set."""
         assert len(self.children) == 0, 'children already created'
-        for terminal in self.source_sets.keys():
+        for terminal in allowed_terminals:
             self._add_child(new_node=lonely_node, new_source_set=terminal)
 
     def find_lonely_nodes(self):

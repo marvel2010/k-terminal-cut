@@ -5,7 +5,11 @@ from gurobipy import GRB
 from gurobipy import quicksum
 
 
-def ip_algorithm(graph, terminals, relaxation=False, dual=False):
+def ip_algorithm(graph,
+                 terminals,
+                 relaxation=False,
+                 dual=False,
+                 persistence_sets=False):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     Vertex Variables: x_i^k for each vertex i for each set k
@@ -21,9 +25,12 @@ def ip_algorithm(graph, terminals, relaxation=False, dual=False):
         graph: The networkx graph for which the Multiterminal Cut Problem is to be solved.
         terminals: The nodes which are terminals in the Multiterminal Cut Problem.
         relaxation: Solves the LP relaxation instead of the full IP.
+        dual: Includes information about the LP dual.
+        persistence_sets: Returns the terminals_by_vertex mapping.
 
     Returns:
         dictionary of terminal to nodes associated with terminal.
+        value of the IP or LP cut.
     """
 
     mdl = Model("MultiTerminalCuts")
@@ -99,7 +106,7 @@ def ip_algorithm(graph, terminals, relaxation=False, dual=False):
 
     # dual variables
     if dual:
-        assert relaxation, 'get only get dual of LP relaxation'
+        assert relaxation, 'only get dual of LP relaxation'
         for constraint in mdl.getConstrs():
             if constraint.getAttr("Pi") != 0.0:
                 print('value of constraint %s, is %s' % (constraint.constrName,
@@ -107,10 +114,17 @@ def ip_algorithm(graph, terminals, relaxation=False, dual=False):
 
     # print solution
     source_sets = {terminal: set() for terminal in terminals}
+    possible_terminals_by_node = {node: set() for node in graph.nodes()}
     for i in graph.nodes():
         for k in terminals:
             if x_variables[i][k].x == 1.0:
                 source_sets[k].add(i)
+            if x_variables[i][k].x > 0.0:
+                possible_terminals_by_node[i].add(k)
     cut_value = round(mdl.ObjVal, 8)
 
-    return source_sets, cut_value
+    if persistence_sets:
+        assert relaxation, 'only get persistence from LP relaxation'
+        return possible_terminals_by_node, cut_value
+    else:
+        return source_sets, cut_value

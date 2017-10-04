@@ -16,7 +16,7 @@ class BranchAndBoundTree:
         lonely_nodes
     """
 
-    def __init__(self, graph, terminals, terminal_sets=None):
+    def __init__(self, graph, terminals, terminal_sets=None, terminals_by_vertex=None):
 
         if terminal_sets is not None:
             root_node = BranchAndBoundTree._construct_intermediate_node(graph,
@@ -25,6 +25,11 @@ class BranchAndBoundTree:
         else:
             root_node = BranchAndBoundTree._construct_root_node(graph,
                                                                 terminals)
+
+        if terminals_by_vertex is not None:
+            self.terminals_by_vertex = terminals_by_vertex
+        else:
+            self.terminals_by_vertex = {node: terminals for node in graph.nodes()}
 
         self.all_nodes = [root_node]
         self.global_lower_bound = 0.0
@@ -60,15 +65,23 @@ class BranchAndBoundTree:
             self.done = True
             return self.node_with_lowest_bound
         else:
-            lonely_node_chosen = self._choose_lonely_node_highest_degree()
-            self.node_with_lowest_bound.construct_children_nodes(lonely_node_chosen)
+            lonely_vertex_chosen = self._choose_lonely_node_highest_degree()
+
+            # choose the right set of possible terminals for this node
+            self.node_with_lowest_bound\
+                .construct_children_nodes(lonely_vertex_chosen,
+                                          self.terminals_by_vertex[lonely_vertex_chosen])
+
             # note: we do not need to worry about duplicate nodes
             # the nodes are constructed by forcing an assignment of vertices to terminals
             # thus, the resulting partitions can never be identical
             self.all_nodes += self.node_with_lowest_bound.children
+
             assert (self.node_with_lowest_bound.lower_bound
                     >= self.global_lower_bound), 'lower bound issue'
+
             self.global_lower_bound = self.node_with_lowest_bound.lower_bound
+
             return None
 
     def _choose_lonely_node_random(self):
