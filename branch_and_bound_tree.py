@@ -102,7 +102,7 @@ class BranchAndBoundTree:
         return max(shortest_distances, key=shortest_distances.get)
 
     def _choose_lonely_node_highest_degree(self):
-        degrees = nx.degree(self.node_with_lowest_bound.graph, weight='capacity')
+        degrees = dict(nx.degree(self.node_with_lowest_bound.graph, weight='capacity'))
         degrees_restricted = {node: node_degree
                               for node, node_degree in degrees.items()
                               if node in self.lonely_nodes}
