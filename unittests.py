@@ -92,7 +92,7 @@ class TestGraphs(unittest.TestCase):
         test_strong_persistence(graph, terminals)
 
     def test_graph_5(self):
-        """graph with LP 105, IP 110"""
+        """graph with LP 110, IP 110"""
         graph = nx.Graph()
         terminals = range(1, 6)
         subset_sizes = 3
