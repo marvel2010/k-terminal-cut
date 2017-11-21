@@ -7,9 +7,12 @@ from ip_formulation import ip_algorithm
 
 def main():
     """Constructs a desired random graph and tests weak persistence on it."""
-    graph, terminals = create_random_graph('barabasi_albert', 100)
-    test_weak_persistence(graph, terminals)
-    test_strong_persistence(graph, terminals)
+    for _ in range(100):
+        graph, terminals = create_random_graph('barabasi_albert', 10)
+        if not test_weak_persistence(graph, terminals):
+            print(graph, terminals)
+        if not test_strong_persistence(graph, terminals):
+            print(graph, terminals)
 
 
 def test_weak_persistence(graph, terminals):
@@ -38,9 +41,7 @@ def test_weak_persistence(graph, terminals):
                                                  terminals=terminals,
                                                  terminal_sets=lp_cut)
 
-    assert round(unseeded_value, 8) == round(seeded_value, 8), ('persistence violated %s %s'
-                                                                % (unseeded_value, seeded_value))
-    return unseeded_value, seeded_value
+    return round(unseeded_value, 8) == round(seeded_value, 8)
 
 
 def test_strong_persistence(graph, terminals):
@@ -71,14 +72,11 @@ def test_strong_persistence(graph, terminals):
                                                 terminals=terminals,
                                                 terminals_by_vertex=terminals_by_vertex)
 
-    assert round(unseeded_value, 8) == round(seeded_value, 8), ('persistence violated %s %s'
-                                                                % (unseeded_value, seeded_value))
-
     for node in graph.nodes():
         assert sum(node in final_terminal_assignments[t]
                    for t in terminals_by_vertex[node]) == 1, 'persistence violated'
 
-    return unseeded_value, seeded_value
+    return round(unseeded_value, 8) == round(seeded_value, 8)
 
 
 if __name__ == '__main__':

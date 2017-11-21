@@ -25,8 +25,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 8)
-        test_weak_persistence(graph, terminals)
-        test_strong_persistence(graph, terminals)
+        assert test_weak_persistence(graph, terminals)
+        assert test_strong_persistence(graph, terminals)
 
     def test_graph_2(self):
         """graph with LP 7.5, IP 8"""
@@ -41,8 +41,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 7.5)
-        test_weak_persistence(graph, terminals)
-        test_strong_persistence(graph, terminals)
+        assert test_weak_persistence(graph, terminals)
+        assert test_strong_persistence(graph, terminals)
 
     def test_graph_3(self):
         """graph with LP 24, IP 26"""
@@ -65,8 +65,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 26)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 24)
-        test_weak_persistence(graph, terminals)
-        test_strong_persistence(graph, terminals)
+        assert test_weak_persistence(graph, terminals)
+        assert test_strong_persistence(graph, terminals)
 
     def test_graph_4(self):
         """graph with LP 26, IP 27"""
@@ -88,8 +88,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 27)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 26)
-        test_weak_persistence(graph, terminals)
-        test_strong_persistence(graph, terminals)
+        assert test_weak_persistence(graph, terminals)
+        assert test_strong_persistence(graph, terminals)
 
     def test_graph_5(self):
         """graph with LP 110, IP 110"""
@@ -117,6 +117,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 110)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 110)
+        #assert test_weak_persistence(graph, terminals)
+        #assert test_strong_persistence(graph, terminals)
 
     def test_graph_6(self):
         """
@@ -135,8 +137,8 @@ class TestGraphs(unittest.TestCase):
         self.assertEqual(cut_value, 27)
         _, cut_value = ip_algorithm(graph, terminals, relaxation=True)
         self.assertEqual(cut_value, 27)
-        test_weak_persistence(graph, terminals)
-        test_strong_persistence(graph, terminals)
+        assert test_weak_persistence(graph, terminals)
+        assert test_strong_persistence(graph, terminals)
 
 if __name__ == '__main__':
     unittest.main()

@@ -7,9 +7,7 @@ from branch_and_bound_formulation import branch_and_bound_algorithm
 
 
 def main():
-    """
-    cProfile for branch_and_bound_algorithm
-    """
+    """cProfile for branch_and_bound_algorithm"""
 
     graph, terminals = create_random_graph('barabasi_albert', 10000)
 
@@ -54,7 +52,7 @@ def create_random_graph(model_name, node_count):
     else:
         raise ValueError("")
 
-    for edge in graph.edges_iter():
+    for edge in graph.edges():
         graph[edge[0]][edge[1]]['capacity'] = 0.1 + random.random()
 
     terminals = [0, 1, 2, 3]

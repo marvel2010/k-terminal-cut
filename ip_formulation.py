@@ -9,7 +9,8 @@ def ip_algorithm(graph,
                  terminals,
                  relaxation=False,
                  dual=False,
-                 persistence_sets=False):
+                 persistence_sets=False,
+                 print_solution=False):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     Vertex Variables: x_i^k for each vertex i for each set k
@@ -27,6 +28,7 @@ def ip_algorithm(graph,
         relaxation: Solves the LP relaxation instead of the full IP.
         dual: Includes information about the LP dual.
         persistence_sets: Returns the terminals_by_vertex mapping.
+        print_solution: Prints solution to output.
 
     Returns:
         dictionary of terminal to nodes associated with terminal.
@@ -63,11 +65,11 @@ def ip_algorithm(graph,
                                                       lb=0.0,
                                                       ub=1.0,
                                                       obj=0.5*graph[i][j]['capacity'],
-                                                      name="Node %s, Node %s" % (i, j))
+                                                      name="Node %s, Node %s, Terminal %s" % (i, j, k))
                 else:
                     z_variables[i][j][k] = mdl.addVar(vtype=GRB.BINARY,
                                                       obj=0.5*graph[i][j]['capacity'],
-                                                      name="Node %s, Node %s" % (i, j))
+                                                      name="Node %s, Node %s, Terminal %s" % (i, j, k))
 
     mdl.modelSense = GRB.MINIMIZE
     mdl.update()
@@ -104,6 +106,13 @@ def ip_algorithm(graph,
     mdl.Params.LogToConsole = 0
     mdl.optimize()
 
+    # primal variables
+    if print_solution:
+        for variable in mdl.getVars():
+            if variable.getAttr("x") != 0.0:
+                print("value of variable %s, is %s" % (variable.varName,
+                                                       variable.getAttr("x")))
+
     # dual variables
     if dual:
         assert relaxation, 'only get dual of LP relaxation'
@@ -112,7 +121,7 @@ def ip_algorithm(graph,
                 print('value of constraint %s, is %s' % (constraint.constrName,
                                                          constraint.getAttr("Pi")))
 
-    # print solution
+    # record solution
     source_sets = {terminal: set() for terminal in terminals}
     possible_terminals_by_node = {node: set() for node in graph.nodes()}
     for i in graph.nodes():
