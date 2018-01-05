@@ -4,7 +4,7 @@ import unittest
 import itertools
 import networkx as nx
 from branch_and_bound_formulation import branch_and_bound_algorithm
-from ip_formulation import ip_algorithm
+from ip_algorithm import ip_algorithm
 from persistence import test_weak_persistence
 from persistence import test_strong_persistence
 
