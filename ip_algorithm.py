@@ -6,9 +6,7 @@ from ip_formulation import IPFormulation
 def ip_algorithm(graph,
                  terminals,
                  relaxation=False,
-                 dual=False,
-                 persistence_sets=False,
-                 print_solution=False):
+                 persistence_sets=False):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     minimize (1/2) sum_{i,j,k}{z_{ij}^k}

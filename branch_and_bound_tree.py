@@ -2,7 +2,7 @@
 
 import numpy as np
 import networkx as nx
-from tree_node import TreeNode
+from branch_and_bound_tree_node import TreeNode
 
 
 class BranchAndBoundTree:

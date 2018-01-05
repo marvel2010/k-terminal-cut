@@ -4,6 +4,7 @@ from gurobipy import Model
 from gurobipy import GRB
 from gurobipy import quicksum
 
+
 class IPFormulation():
     """Formulates the Multiterminal Cut Porblem using IP.
 
