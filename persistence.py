@@ -1,7 +1,7 @@
 """Tests for WEAK persistence in the k-terminal-cut problem."""
 
 from timetests import create_random_graph
-from branch_and_bound_formulation import branch_and_bound_algorithm
+from branch_and_bound_algorithm import branch_and_bound_algorithm
 from ip_algorithm import ip_algorithm
 
 
