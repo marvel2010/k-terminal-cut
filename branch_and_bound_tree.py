@@ -2,7 +2,7 @@
 
 import numpy as np
 import networkx as nx
-from branch_and_bound_tree_node import TreeNode
+from branch_and_bound_tree_node import BranchAndBoundTreeNode
 
 
 class BranchAndBoundTree:
@@ -39,16 +39,16 @@ class BranchAndBoundTree:
 
     @staticmethod
     def _construct_root_node(graph, terminals):
-        return TreeNode(is_root=True,
-                        in_graph=graph,
-                        root_terminals=terminals)
+        return BranchAndBoundTreeNode(is_root=True,
+                                      in_graph=graph,
+                                      root_terminals=terminals)
 
     @staticmethod
     def _construct_intermediate_node(graph, terminals, terminal_sets):
-        return TreeNode(is_intermediate=True,
-                        in_graph=graph,
-                        root_terminals=terminals,
-                        int_source_sets=terminal_sets)
+        return BranchAndBoundTreeNode(is_intermediate=True,
+                                      in_graph=graph,
+                                      root_terminals=terminals,
+                                      int_source_sets=terminal_sets)
 
     def _step(self):
         """One step of the branch-and-bound algorithm.

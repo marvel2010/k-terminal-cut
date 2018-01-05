@@ -5,7 +5,7 @@ from copy import deepcopy
 from minimum_isolating_cut import minimum_isolating_cut
 
 
-class TreeNode:
+class BranchAndBoundTreeNode:
     """Node in the branch-and-bound tree for multi-terminal cut.
 
     Attributes:
@@ -134,7 +134,7 @@ class TreeNode:
             new_node: the node to be added (previously lonely)
             new_source_set: the set this new node will be added to
         """
-        child = TreeNode(self, new_node, new_source_set)
+        child = BranchAndBoundTreeNode(self, new_node, new_source_set)
         assert child.lower_bound >= self.lower_bound, ' created bad child '
         self.children.append(child)
 
