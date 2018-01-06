@@ -18,8 +18,8 @@ class BranchAndBoundTreeNode:
 
     def __init__(self,
                  parent_node=None,
-                 new_node=None,
-                 new_source_set=None,
+                 new_vertex=None,
+                 new_vertex_source_set=None,
                  is_root=False,
                  in_graph=None,
                  root_terminals=None,
@@ -29,8 +29,8 @@ class BranchAndBoundTreeNode:
         if is_root:
             # assertions
             assert parent_node is None
-            assert new_node is None
-            assert new_source_set is None
+            assert new_vertex is None
+            assert new_vertex_source_set is None
             assert in_graph is not None
             assert root_terminals is not None
             assert int_source_sets is None
@@ -63,8 +63,8 @@ class BranchAndBoundTreeNode:
         elif is_intermediate:
             # assertions
             assert parent_node is None
-            assert new_node is None
-            assert new_source_set is None
+            assert new_vertex is None
+            assert new_vertex_source_set is None
             assert in_graph is not None
             assert root_terminals is not None
             assert int_source_sets is not None
@@ -83,8 +83,8 @@ class BranchAndBoundTreeNode:
         else:
             # assertions
             assert parent_node is not None
-            assert new_node is not None
-            assert new_source_set is not None
+            assert new_vertex is not None
+            assert new_vertex_source_set is not None
             assert in_graph is None
             assert root_terminals is None
             assert int_source_sets is None
@@ -97,32 +97,14 @@ class BranchAndBoundTreeNode:
             self.iso_cut_weights = deepcopy(parent_node.iso_cut_weights)
 
             # run expansion
-            self.source_sets[new_source_set].add(new_node)
-            self._expand_source_set(new_source_set)
+            self.source_sets[new_vertex_source_set].add(new_vertex)
+            self._expand_source_set(new_vertex_source_set)
 
             # run checks
-            assert (self.source_sets[new_source_set]
-                    > self.parent_node.source_sets[new_source_set]), ' subset problem '
+            assert (self.source_sets[new_vertex_source_set]
+                    > self.parent_node.source_sets[new_vertex_source_set]), ' subset problem '
 
         self.lower_bound = self.calculate_lower_bound()
-
-    def __lt__(self, other):
-        return self.lower_bound < other.lower_bound
-
-    def __le__(self, other):
-        return self.lower_bound <= other.lower_bound
-
-    def __gt__(self, other):
-        return self.lower_bound > other.lower_bound
-
-    def __ge__(self, other):
-        return self.lower_bound >= other.lower_bound
-
-    def __eq__(self, other):
-        return self.lower_bound == other.lower_bound
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
     def _add_child(self, new_node, new_source_set):
         """Creates a new child of this tree node.
@@ -148,16 +130,16 @@ class BranchAndBoundTreeNode:
                                                 )
                                  )
 
-    def construct_children_nodes(self, lonely_node, allowed_terminals):
+    def construct_children_nodes(self, lonely_vertex, allowed_terminals):
         """Runs _add_child for each possible source set."""
         assert len(self.children) == 0, 'children already created'
         for terminal in allowed_terminals:
-            self._add_child(new_node=lonely_node, new_source_set=terminal)
+            self._add_child(new_node=lonely_vertex, new_source_set=terminal)
 
-    def find_lonely_nodes(self):
+    def find_lonely_vertices(self):
         """Finds the nodes in the graph which are lonely"""
-        lonely_nodes = set(self.graph.nodes()) - set(chain.from_iterable(self.source_sets.values()))
-        return lonely_nodes
+        lonely_vertices = set(self.graph.nodes()) - set(chain.from_iterable(self.source_sets.values()))
+        return lonely_vertices
 
     def calculate_lower_bound(self):
         """Calculates the lower bound on the objective function at this node."""

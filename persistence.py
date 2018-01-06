@@ -2,7 +2,7 @@
 
 from timetests import create_random_graph
 from branch_and_bound_algorithm import branch_and_bound_algorithm
-from ip_algorithm import ip_algorithm
+from lp_algorithm import lp_algorithm
 
 
 def main():
@@ -33,9 +33,8 @@ def test_weak_persistence(graph, terminals):
     _, unseeded_value = branch_and_bound_algorithm(graph,
                                                    terminals)
 
-    lp_cut, _ = ip_algorithm(graph,
-                             terminals,
-                             relaxation=True)
+    lp_cut, _ = lp_algorithm(graph,
+                             terminals)
 
     _, seeded_value = branch_and_bound_algorithm(graph,
                                                  terminals=terminals,
@@ -62,9 +61,8 @@ def test_strong_persistence(graph, terminals):
     _, unseeded_value = branch_and_bound_algorithm(graph,
                                                    terminals)
 
-    terminals_by_vertex, _ = ip_algorithm(graph,
+    terminals_by_vertex, _ = lp_algorithm(graph,
                                           terminals,
-                                          relaxation=True,
                                           persistence_sets=True)
 
     (final_terminal_assignments,

@@ -1,10 +1,11 @@
-"""Solves the IP Formulation of the Multiterminal Cut Problem using Gurobi."""
+"""Solves the LP Formulation of the Multiterminal Cut Problem using Gurobi."""
 
 from ip_formulation import IPFormulation
 
 
-def ip_algorithm(graph,
-                 terminals):
+def lp_algorithm(graph,
+                 terminals,
+                 persistence_sets=False):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     minimize (1/2) sum_{i,j,k}{z_{ij}^k}
@@ -25,6 +26,12 @@ def ip_algorithm(graph,
         dictionary of terminal to nodes associated with terminal.
         value of the IP or LP cut.
     """
+
     ip_formulation = IPFormulation(graph, terminals)
-    ip_formulation.solve_ip()
-    return ip_formulation.get_source_sets(), ip_formulation.get_cut_value()
+
+    ip_formulation.solve_lp()
+
+    if persistence_sets:
+        return ip_formulation.get_possible_terminals_by_node(), ip_formulation.get_cut_value()
+    else:
+        return ip_formulation.get_source_sets(), ip_formulation.get_cut_value()

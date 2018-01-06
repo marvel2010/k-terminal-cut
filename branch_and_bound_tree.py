@@ -59,7 +59,7 @@ class BranchAndBoundTree:
         self.all_nodes.sort(key=lambda x: x.lower_bound, reverse=True)
         self.node_with_lowest_bound = self.all_nodes.pop()
 
-        self.lonely_nodes = self.node_with_lowest_bound.find_lonely_nodes()
+        self.lonely_nodes = self.node_with_lowest_bound.find_lonely_vertices()
 
         if len(self.lonely_nodes) == 0:
             self.done = True
@@ -127,4 +127,5 @@ class BranchAndBoundTree:
                 print("Objective Lower Bound", self.global_lower_bound)
                 #print("Source Sets Expanded", self.node_with_lowest_bound.source_sets)
             i += 1
+
         return final_node.source_sets, final_node.lower_bound
