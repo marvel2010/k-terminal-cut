@@ -1,5 +1,5 @@
 """Derives key properties at the Branch and Bound tree root."""
-from combined_vertices import combined_vertices_several
+from combined_vertices import contract_vertices_several
 from minimum_isolating_cut import minimum_isolating_cut
 
 
@@ -17,7 +17,7 @@ class BranchAndBoundTreeRoot:
     def combine_terminal_sets(self, terminal_sets):
         """A set of nodes pre-assigned to a particular terminal."""
         for terminal in self.terminals:
-            self.graph = combined_vertices_several(self.graph, terminal, terminal_sets[terminal]-{terminal})
+            self.graph = contract_vertices_several(self.graph, terminal, terminal_sets[terminal]-{terminal})
 
     def initial_isolating_cuts(self):
         """The initial isolating cuts."""
@@ -25,7 +25,7 @@ class BranchAndBoundTreeRoot:
             source_set, weight = minimum_isolating_cut(self.graph,
                                                        source_nodes={terminal},
                                                        sink_nodes=set(self.terminals)-{terminal})
-            self.graph = combined_vertices_several(self.graph, terminal, source_set-{terminal})
+            self.graph = contract_vertices_several(self.graph, terminal, source_set-{terminal})
 
     def get_graph(self):
         return self.graph

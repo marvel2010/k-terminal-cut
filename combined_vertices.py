@@ -1,30 +1,29 @@
 """Utilities for combining vertices."""
 
 
-def combined_vertices_several(graph, u, v_set):
+def contract_vertices_several(graph, u, v_set):
     """Combines several vertices"""
     assert u not in v_set, 'cannot combine a node to itself'
-    # copy graph
-    H = graph.copy()
     # decide if nodes are single or duplicate
     for v in v_set:
         for _, w, d in graph.edges(v, data=True):
             if w == u or w in v_set:
                 continue
-            elif (u, w) in H.edges(u):
-                H[u][w]['capacity'] += d['capacity']
+            elif (u, w) in graph.edges(u):
+                graph[u][w]['capacity'] += d['capacity']
             else:
-                H.add_edge(u, w, capacity=d['capacity'])
-        H.remove_node(v)
+                graph.add_edge(u, w, capacity=d['capacity'])
+        # remove node
+        graph.remove_node(v)
         # keep a record of all contracted nodes
-        if 'combined' in H.node[u]:
-            H.node[u]['combined'].add(v)
+        if 'combined' in graph.node[u]:
+            graph.node[u]['combined'].add(v)
         else:
-            H.node[u]['combined'] = {v}
-    return H
+            graph.node[u]['combined'] = {v}
+    return graph
 
 
-def combined_vertices(graph, u, v):
+def contract_vertex_and_copy(graph, u, v):
     """
     Combined two nodes in a graph such that their outgoing capacities sum.
 
@@ -37,16 +36,17 @@ def combined_vertices(graph, u, v):
         new_graph
     """
     assert u != v, 'cannot combine a node to itself'
-    # copy graph
+    # copy
     H = graph.copy()
     # decide if nodes are single or duplicate
-    for x, w, d in graph.edges(v, data=True):
-        if u == w:
+    for _, w, d in graph.edges(v, data=True):
+        if w == u:
             continue
-        if (u, w) in H.edges(u):
+        elif (u, w) in H.edges(u):
             H[u][w]['capacity'] += d['capacity']
         else:
             H.add_edge(u, w, capacity=d['capacity'])
+    # remove node
     H.remove_node(v)
     # keep a record of all contracted nodes
     if 'combined' in H.node[u]:

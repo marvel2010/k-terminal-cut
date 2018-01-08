@@ -2,8 +2,8 @@
 
 from itertools import chain
 from minimum_isolating_cut import minimum_isolating_cut
-from combined_vertices import combined_vertices
-from combined_vertices import combined_vertices_several
+from combined_vertices import contract_vertex_and_copy
+from combined_vertices import contract_vertices_several
 
 
 class BranchAndBoundTreeNode:
@@ -37,13 +37,14 @@ class BranchAndBoundTreeNode:
         self.lower_bound = self._calculate_lower_bound()
 
     def _source_set_add_vertex(self):
-        self.graph = combined_vertices(self.graph, self.new_vertex_terminal, self.new_vertex)
+        # copy is required because we try adding the same vertex to several source sets
+        self.graph = contract_vertex_and_copy(self.graph, self.new_vertex_terminal, self.new_vertex)
 
     def _source_set_isolating_cut(self):
         source_set, weight = minimum_isolating_cut(self.graph,
                                                    source_nodes={self.new_vertex_terminal},
                                                    sink_nodes=set(self.terminals)-{self.new_vertex_terminal})
-        self.graph = combined_vertices_several(self.graph, self.new_vertex_terminal, source_set-{self.new_vertex_terminal})
+        self.graph = contract_vertices_several(self.graph, self.new_vertex_terminal, source_set-{self.new_vertex_terminal})
 
     def _add_child(self, new_vertex, new_vertex_terminal):
         """Creates a new child of this tree node.
