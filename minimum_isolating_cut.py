@@ -38,26 +38,6 @@ def minimum_isolating_cut(graph, source_nodes, sink_nodes):
         residual.add_edges_from(cutset)
     cut_weight = residual.graph['flow_value']
 
-    # cut_weight, cut_partition = nx.minimum_cut(G_prime,
-    #                                            's_node',
-    #                                            't_node',
-    #                                            capacity='capacity',
-    #                                            flow_func=shortest_augmenting_path)
-    # cut_source, cut_sink = cut_partition
-
-    # print('PreflowPush', nx.minimum_cut(G_prime, 's_node', 't_node', flow_func=preflow_push))
-    # print('ShortestAugPath', nx.minimum_cut(G_prime,
-    #                                         's_node',
-    #                                         't_node',
-    #                                         flow_func=shortest_augmenting_path))
-    # print('EdmondsKarp', nx.minimum_cut(G_prime, 's_node', 't_node', flow_func=edmonds_karp))
-
-    # print('--- requested source nodes', source_nodes)
-    # print('--- requested sink nodes', sink_nodes)
-    # print('--- returned source', cut_source)
-    # print('--- returned sink', cut_sink)
-    # print('--- cut weight', cut_weight)
-
     assert 's_node' in cut_source, ' source node not included in source set '
     assert 't_node' in cut_sink, ' sink node not included in sink set '
 

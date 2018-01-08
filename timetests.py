@@ -4,6 +4,7 @@ import random
 import cProfile
 import networkx as nx
 from branch_and_bound_algorithm import branch_and_bound_algorithm
+from ip_algorithm import ip_algorithm
 
 
 def main():
@@ -14,18 +15,22 @@ def main():
     assert nx.is_connected(graph), 'graph not connected'
 
     variable_specifications = {'branch_and_bound_algorithm': branch_and_bound_algorithm,
+                               'ip_algorithm': ip_algorithm,
                                'graph': graph,
                                'terminals': terminals}
 
     cProfile.runctx("branch_and_bound_algorithm(graph, terminals)", variable_specifications, {})
 
+    cProfile.runctx("ip_algorithm(graph, terminals)", variable_specifications, {})
 
-def create_random_graph(model_name, node_count):
+
+def create_random_graph(model_name, node_count, terminal_count=4):
     """Creates a random graph according to some model.
 
     Args:
         model_name: which model to use for the random graph
         node_count: number of nodes in the graph
+        terminal_count: number of terminals in the graph
 
     Returns:
         graph: the graph in networkx format
@@ -55,7 +60,7 @@ def create_random_graph(model_name, node_count):
     for edge in graph.edges():
         graph[edge[0]][edge[1]]['capacity'] = 0.1 + random.random()
 
-    terminals = [0, 1, 2, 3]
+    terminals = range(terminal_count)
 
     return graph, terminals
 

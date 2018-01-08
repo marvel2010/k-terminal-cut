@@ -3,6 +3,7 @@
 import numpy as np
 import networkx as nx
 from branch_and_bound_tree_node import BranchAndBoundTreeNode
+from branch_and_bound_tree_root import BranchAndBoundTreeRoot
 
 
 class BranchAndBoundTree:
@@ -18,37 +19,20 @@ class BranchAndBoundTree:
 
     def __init__(self, graph, terminals, terminal_sets=None, terminals_by_vertex=None):
 
+        root_node = BranchAndBoundTreeRoot(graph, terminals, terminals_by_vertex)
         if terminal_sets is not None:
-            root_node = BranchAndBoundTree._construct_intermediate_node(graph,
-                                                                        terminals,
-                                                                        terminal_sets)
-        else:
-            root_node = BranchAndBoundTree._construct_root_node(graph,
-                                                                terminals)
+            root_node.combine_terminal_sets(terminal_sets)
+        root_node.initial_isolating_cuts()
 
-        if terminals_by_vertex is not None:
-            self.terminals_by_vertex = terminals_by_vertex
-        else:
-            self.terminals_by_vertex = {node: terminals for node in graph.nodes()}
+        graph = root_node.get_graph()
+        self.terminals = root_node.get_terminals()
+        self.terminals_by_vertex = root_node.get_terminals_by_vertex()
 
-        self.all_nodes = [root_node]
+        self.all_nodes = [BranchAndBoundTreeNode(graph, terminals, None, None)]
         self.global_lower_bound = 0.0
         self.done = False
         self.node_with_lowest_bound = None
         self.lonely_nodes = None
-
-    @staticmethod
-    def _construct_root_node(graph, terminals):
-        return BranchAndBoundTreeNode(is_root=True,
-                                      in_graph=graph,
-                                      root_terminals=terminals)
-
-    @staticmethod
-    def _construct_intermediate_node(graph, terminals, terminal_sets):
-        return BranchAndBoundTreeNode(is_intermediate=True,
-                                      in_graph=graph,
-                                      root_terminals=terminals,
-                                      int_source_sets=terminal_sets)
 
     def _step(self):
         """One step of the branch-and-bound algorithm.
@@ -128,4 +112,11 @@ class BranchAndBoundTree:
                 #print("Source Sets Expanded", self.node_with_lowest_bound.source_sets)
             i += 1
 
-        return final_node.source_sets, final_node.lower_bound
+        final_node_source_sets = {}
+        for terminal in self.terminals:
+            if 'combined' in final_node.graph.node[terminal]:
+                final_node_source_sets[terminal] = final_node.graph.node[terminal]['combined'] | {terminal}
+            else:
+                final_node_source_sets[terminal] = {terminal}
+
+        return final_node_source_sets, round(final_node.lower_bound, 8)
