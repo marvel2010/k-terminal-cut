@@ -1,5 +1,5 @@
 """Derives key properties at the Branch and Bound tree root."""
-from combined_vertices import contract_vertices_several
+from contract_vertices import contract_vertices_several
 from minimum_isolating_cut import minimum_isolating_cut
 
 
@@ -19,7 +19,9 @@ class BranchAndBoundTreeRoot:
             self.graph = contract_vertices_several(self.graph, terminal, source_set-{terminal})
 
     def get_graph(self):
+        """self.graph"""
         return self.graph
 
     def get_terminals(self):
+        """self.terminals"""
         return self.terminals

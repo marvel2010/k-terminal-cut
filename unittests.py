@@ -6,7 +6,7 @@ import unittest
 from branch_and_bound_algorithm import branch_and_bound_algorithm
 from ip_algorithm import ip_algorithm
 from lp_algorithm import lp_algorithm
-from combined_vertices import contract_vertices_several
+from contract_vertices import contract_vertices_several
 from persistence import test_persistence
 
 

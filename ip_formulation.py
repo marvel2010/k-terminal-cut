@@ -21,12 +21,23 @@ class IPFormulation():
     def __init__(self, graph, terminals):
         self.graph = graph
         self.terminals = terminals
+        self.mdl = None
+        self.x_variables = {}
+        self.z_variables = {}
+        self.c_nodes = {}
+        self.c_edges = {}
+        self.c_terminals = {}
+        self.possible_terminals_by_node_weak = None
+        self.possible_terminals_by_node_strong = None
+        self.cut_value = None
 
     def _initialize_model(self):
         self.mdl = Model("MultiTerminalCuts")
 
     def _initialize_node_variables_ip(self):
-        self.x_variables = {}
+        """
+        Initialize variables x_i^k for IP.
+        """
         for i in self.graph.nodes():
             self.x_variables[i] = {}
             for k in self.terminals:
@@ -34,7 +45,9 @@ class IPFormulation():
                                                          name="Node %s, Terminal %s" % (i, k))
 
     def _initialize_node_variables_lp(self):
-        self.x_variables = {}
+        """
+        Initialize variables x_i^k for LP.
+        """
         for i in self.graph.nodes():
             self.x_variables[i] = {}
             for k in self.terminals:
@@ -44,7 +57,9 @@ class IPFormulation():
                                                          name="Node %s, Terminal %s" % (i, k))
 
     def _initialize_edge_variables_ip(self):
-        self.z_variables = {}
+        """
+        Initialize variables z_ij^k for IP.
+        """
         for i in self.graph.nodes():
             self.z_variables[i] = {}
             for j in self.graph[i]:
@@ -55,7 +70,9 @@ class IPFormulation():
                                                                 name="Node %s, Node %s, Terminal %s" % (i, j, k))
 
     def _initialize_edge_variables_lp(self):
-        self.z_variables = {}
+        """
+        Initialize variables z_ij^k for LP.
+        """
         for i in self.graph.nodes():
             self.z_variables[i] = {}
             for j in self.graph[i]:
@@ -74,39 +91,51 @@ class IPFormulation():
         self.mdl.update()
 
     def _initialize_contraint_nodes(self):
-        self.c_nodes = {}
+        """
+        Initialize constraint sum_k{x_{i}^k} = 1
+        """
         for i in self.graph.nodes():
-            self.c_nodes[i] = self.mdl.addConstr(quicksum(self.x_variables[i][k] for k in self.terminals) == 1.0,
+            self.c_nodes[i] = self.mdl.addConstr(quicksum(self.x_variables[i][k]
+                                                          for k in self.terminals) == 1.0,
                                                  "CtrNode %s" % str(i))
 
     def _initialize_constraint_edges(self):
-        self.c_edges = {}
+        """
+        Initialize constrants
+            z_{ij}^k >= x_{i}^k-x_{j}^k for all k
+            z_{ij}^k >= x_{j}^k-x_{i}^k for all k
+        """
         for (i, j) in self.graph.edges():
             self.c_edges[(i, j)] = {}
             self.c_edges[(j, i)] = {}
             for k in self.terminals:
                 self.c_edges[(i, j)][k] = (
-                    self.mdl.addConstr(self.z_variables[i][j][k] >= self.x_variables[i][k] - self.x_variables[j][k],
+                    self.mdl.addConstr(self.z_variables[i][j][k] >=
+                                       self.x_variables[i][k] - self.x_variables[j][k],
                                        name="flow %s %s %s" % (i, j, k))
                 )
                 self.c_edges[(j, i)][k] = (
-                    self.mdl.addConstr(self.z_variables[i][j][k] >= self.x_variables[j][k] - self.x_variables[i][k],
+                    self.mdl.addConstr(self.z_variables[i][j][k] >=
+                                       self.x_variables[j][k] - self.x_variables[i][k],
                                        name="flow %s %s %s" % (j, i, k))
                 )
 
-    # CONSTRAINT: initialize
     def _initialize_constraint_terminals(self):
-        self.c_terminals = {}
+        """
+        Initialize constraint
+            x_k^k = 1
+        """
         for k in self.terminals:
             self.c_terminals[k] = self.mdl.addConstr(self.x_variables[k][k] == 1.0, name="init %s" % k)
 
-    # solve
     def _run_solver(self):
         self.mdl.Params.LogToConsole = 0
         self.mdl.optimize()
 
-    # record solution: source sets
     def _calculate_possible_terminals_by_node_weak(self):
+        """
+        record solution: possible terminals by node assuming *weak* persistence
+        """
         self.possible_terminals_by_node_weak = {node: set() for node in self.graph.nodes()}
         for i in self.graph.nodes():
             flag = True
@@ -117,45 +146,48 @@ class IPFormulation():
             if flag:
                 self.possible_terminals_by_node_weak[i] = self.terminals
 
-    # record solution: possible terminals by node
     def _calculate_possible_terminals_by_node_strong(self):
+        """
+        record solution: possible terminals by node assuming *strong* persistence
+        """
         self.possible_terminals_by_node_strong = {node: set() for node in self.graph.nodes()}
         for i in self.graph.nodes():
             for k in self.terminals:
                 if self.x_variables[i][k].x > 0.0:
                     self.possible_terminals_by_node_strong[i].add(k)
 
-    # record solution: cut value
     def _calculate_cut_value(self):
+        """calculate: self.cut_value"""
         self.cut_value = round(self.mdl.ObjVal, 8)
 
-    # primal variables
     def print_primal(self):
+        """print: primal variables"""
         for variable in self.mdl.getVars():
             if variable.getAttr("x") != 0.0:
                 print("value of variable %s, is %s" % (variable.varName,
                                                        variable.getAttr("x")))
 
-    # dual variables
     def print_dual(self):
+        """print: dual variables"""
         for constraint in self.mdl.getConstrs():
             if constraint.getAttr("Pi") != 0.0:
                 print('value of constraint %s, is %s' % (constraint.constrName,
                                                          constraint.getAttr("Pi")))
 
-    # get cut value
     def get_cut_value(self):
+        """get: self.cut_value"""
         return self.cut_value
 
-    # get source sets
     def get_possible_terminals_by_node_weak(self):
+        """get: self.possible_terminals_by_node_weak"""
         return self.possible_terminals_by_node_weak
 
-    # get possible terminals by node
     def get_possible_terminals_by_node_strong(self):
+        """get: self.possible_terminals_by_node_strong"""
         return self.possible_terminals_by_node_strong
 
     def solve_ip(self):
+        """Solves the Integer Program."""
         self._initialize_model()
         self._initialize_node_variables_ip()
         self._initialize_edge_variables_ip()
@@ -170,6 +202,7 @@ class IPFormulation():
         self._calculate_cut_value()
 
     def solve_lp(self):
+        """Solves the Linear Program."""
         self._initialize_model()
         self._initialize_node_variables_lp()
         self._initialize_edge_variables_lp()

@@ -2,8 +2,8 @@
 
 from itertools import chain
 from minimum_isolating_cut import minimum_isolating_cut
-from combined_vertices import contract_vertex_and_copy
-from combined_vertices import contract_vertices_several
+from contract_vertices import contract_vertex_and_copy
+from contract_vertices import contract_vertices_several
 
 
 class BranchAndBoundTreeNode:
@@ -34,7 +34,7 @@ class BranchAndBoundTreeNode:
             self._source_set_add_vertex()
             self._source_set_isolating_cut()
 
-        self.lower_bound = self._calculate_lower_bound()
+        self.lower_bound = self._sum_of_source_adjacent_edges()
 
     def _source_set_add_vertex(self):
         # copy is required because we try adding the same vertex to several source sets
@@ -63,18 +63,26 @@ class BranchAndBoundTreeNode:
         assert child.lower_bound >= self.lower_bound, ' created bad child '
         self.children.append(child)
 
-    def _calculate_lower_bound(self):
-        """Calculates the lower bound on the objective function at this node."""
-        sm = 0
+    def _sum_of_source_adjacent_edges(self):
+        """
+        Calculates half the sum of the capacities of edges adjacent to terminals.
+
+        Args:
+            (None)
+
+        Returns:
+            capacity_sum
+        """
+        capacity_sum = 0
         for terminal in self.terminals:
             neighbors = self.graph[terminal]
             for neighbor in neighbors:
-                sm += self.graph[terminal][neighbor]['capacity']
-        return sm / 2
+                capacity_sum += self.graph[terminal][neighbor]['capacity']
+        return capacity_sum / 2
 
     def construct_children_nodes(self, lonely_vertex, allowed_terminals):
         """Runs _add_child for each possible source set."""
-        assert len(self.children) == 0, 'children already created'
+        assert not self.children, 'children already created'
         for terminal in allowed_terminals:
             self._add_child(new_vertex=lonely_vertex, new_vertex_terminal=terminal)
 

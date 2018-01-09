@@ -1,11 +1,14 @@
-import networkx as nx
+"""Defines small graphs used for test cases."""
+
 import itertools
+import networkx as nx
 
 
 class SmallGraphs():
 
     def __init__(self):
-        pass
+        self.graph = None
+        self.terminals = None
 
     def _set_test_graph_1(self):
         """Graph with LP 8, IP 8"""
@@ -29,15 +32,15 @@ class SmallGraphs():
         self.terminals = range(1, 5)
         self.graph.add_nodes_from([1, 2, 3, 4, 12, 13, 14, 23, 24, 34])
         self.graph.add_edges_from([(1, 12), (1, 13), (1, 14),
-                              (2, 12), (2, 23), (2, 24),
-                              (3, 13), (3, 23), (3, 34),
-                              (4, 14), (4, 24), (4, 34)],
-                             capacity=3)
+                                   (2, 12), (2, 23), (2, 24),
+                                   (3, 13), (3, 23), (3, 34),
+                                   (4, 14), (4, 24), (4, 34)],
+                                  capacity=3)
         self.graph.add_edges_from([(12, 13), (12, 14), (12, 23), (12, 24),
-                              (13, 14), (13, 23), (13, 34),
-                              (14, 24), (14, 34),
-                              (23, 24), (23, 34),
-                              (24, 34)], capacity=1)
+                                   (13, 14), (13, 23), (13, 34),
+                                   (14, 24), (14, 34),
+                                   (23, 24), (23, 34),
+                                   (24, 34)], capacity=1)
 
     def _set_test_graph_4(self):
         """graph with LP 26, IP 27"""
@@ -45,14 +48,14 @@ class SmallGraphs():
         self.terminals = range(1, 5)
         self.graph.add_nodes_from([1, 2, 3, 4, 123, 124, 134, 234])
         self.graph.add_edges_from([(1, 123), (1, 124), (1, 134),
-                              (2, 123), (2, 124), (2, 234),
-                              (3, 123), (3, 134), (3, 234),
-                              (4, 124), (4, 134), (4, 234)],
-                             capacity=3)
+                                   (2, 123), (2, 124), (2, 234),
+                                   (3, 123), (3, 134), (3, 234),
+                                   (4, 124), (4, 134), (4, 234)],
+                                  capacity=3)
         self.graph.add_edges_from([(123, 124), (123, 134), (123, 234),
-                              (124, 134), (124, 234),
-                              (134, 234)],
-                             capacity=1)
+                                   (124, 134), (124, 234),
+                                   (134, 234)],
+                                  capacity=1)
 
     def _set_test_graph_5(self):
         """graph with LP 110, IP 110"""
@@ -63,13 +66,13 @@ class SmallGraphs():
         self.graph.add_nodes_from(self.terminals)
         self.graph.add_nodes_from(itertools.combinations(self.terminals, subset_sizes))
         self.graph.add_edges_from([(a, b)
-                              for a in self.terminals
-                              for b in itertools.combinations(self.terminals, subset_sizes)
-                              if a in set(b)], capacity=5)
+                                   for a in self.terminals
+                                   for b in itertools.combinations(self.terminals, subset_sizes)
+                                   if a in set(b)], capacity=5)
         self.graph.add_edges_from([(a, b)
-                              for a in itertools.combinations(self.terminals, subset_sizes)
-                              for b in itertools.combinations(self.terminals, subset_sizes)
-                              if len(set(a) & set(b)) == agreement], capacity=1)
+                                   for a in itertools.combinations(self.terminals, subset_sizes)
+                                   for b in itertools.combinations(self.terminals, subset_sizes)
+                                   if len(set(a) & set(b)) == agreement], capacity=1)
 
     def _set_test_graph_6(self):
         """
