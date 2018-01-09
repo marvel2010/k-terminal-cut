@@ -106,20 +106,24 @@ class IPFormulation():
         self.mdl.optimize()
 
     # record solution: source sets
-    def _calculate_source_sets(self):
-        self.source_sets = {terminal: set() for terminal in self.terminals}
+    def _calculate_possible_terminals_by_node_weak(self):
+        self.possible_terminals_by_node_weak = {node: set() for node in self.graph.nodes()}
         for i in self.graph.nodes():
+            flag = True
             for k in self.terminals:
                 if self.x_variables[i][k].x == 1.0:
-                    self.source_sets[k].add(i)
+                    self.possible_terminals_by_node_weak[i].add(k)
+                    flag = False
+            if flag:
+                self.possible_terminals_by_node_weak[i] = self.terminals
 
     # record solution: possible terminals by node
-    def _calculate_possible_terminals_by_node(self):
-        self.possible_terminals_by_node = {node: set() for node in self.graph.nodes()}
+    def _calculate_possible_terminals_by_node_strong(self):
+        self.possible_terminals_by_node_strong = {node: set() for node in self.graph.nodes()}
         for i in self.graph.nodes():
             for k in self.terminals:
                 if self.x_variables[i][k].x > 0.0:
-                    self.possible_terminals_by_node[i].add(k)
+                    self.possible_terminals_by_node_strong[i].add(k)
 
     # record solution: cut value
     def _calculate_cut_value(self):
@@ -144,12 +148,12 @@ class IPFormulation():
         return self.cut_value
 
     # get source sets
-    def get_source_sets(self):
-        return self.source_sets
+    def get_possible_terminals_by_node_weak(self):
+        return self.possible_terminals_by_node_weak
 
     # get possible terminals by node
-    def get_possible_terminals_by_node(self):
-        return self.possible_terminals_by_node
+    def get_possible_terminals_by_node_strong(self):
+        return self.possible_terminals_by_node_strong
 
     def solve_ip(self):
         self._initialize_model()
@@ -161,8 +165,8 @@ class IPFormulation():
         self._initialize_model_sense()
         self._initialize_model_update()
         self._run_solver()
-        self._calculate_source_sets()
-        self._calculate_possible_terminals_by_node()
+        self._calculate_possible_terminals_by_node_weak()
+        self._calculate_possible_terminals_by_node_strong()
         self._calculate_cut_value()
 
     def solve_lp(self):
@@ -175,6 +179,6 @@ class IPFormulation():
         self._initialize_model_sense()
         self._initialize_model_update()
         self._run_solver()
-        self._calculate_source_sets()
-        self._calculate_possible_terminals_by_node()
+        self._calculate_possible_terminals_by_node_weak()
+        self._calculate_possible_terminals_by_node_strong()
         self._calculate_cut_value()

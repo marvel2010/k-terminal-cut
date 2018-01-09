@@ -5,7 +5,7 @@ from ip_formulation import IPFormulation
 
 def lp_algorithm(graph,
                  terminals,
-                 persistence_sets=False):
+                 persistence=None):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     minimize (1/2) sum_{i,j,k}{z_{ij}^k}
@@ -17,13 +17,10 @@ def lp_algorithm(graph,
     Args:
         graph: The networkx graph for which the Multiterminal Cut Problem is to be solved.
         terminals: The nodes which are terminals in the Multiterminal Cut Problem.
-        relaxation: Solves the LP relaxation instead of the full IP.
-        dual: Includes information about the LP dual.
-        persistence_sets: Returns the terminals_by_vertex mapping.
-        print_solution: Prints solution to output.
+        strong_persistence: TODO
 
     Returns:
-        dictionary of terminal to nodes associated with terminal.
+        dictionary of possible_terminals_by_node.
         value of the IP or LP cut.
     """
 
@@ -31,7 +28,9 @@ def lp_algorithm(graph,
 
     ip_formulation.solve_lp()
 
-    if persistence_sets:
-        return ip_formulation.get_possible_terminals_by_node(), ip_formulation.get_cut_value()
+    if persistence == 'strong':
+        return ip_formulation.get_possible_terminals_by_node_strong()
+    elif persistence == 'weak':
+        return ip_formulation.get_possible_terminals_by_node_weak()
     else:
-        return ip_formulation.get_source_sets(), ip_formulation.get_cut_value()
+        return ip_formulation.get_cut_value()

@@ -10,7 +10,7 @@ from ip_algorithm import ip_algorithm
 def main():
     """cProfile for branch_and_bound_algorithm"""
 
-    graph, terminals = create_random_graph('barabasi_albert', 10000)
+    graph, terminals = create_random_graph('barabasi_albert', 10000, terminal_count=4)
 
     assert nx.is_connected(graph), 'graph not connected'
 

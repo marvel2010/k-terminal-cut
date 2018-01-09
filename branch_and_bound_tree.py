@@ -17,17 +17,13 @@ class BranchAndBoundTree:
         lonely_nodes
     """
 
-    def __init__(self, graph, terminals, terminal_sets=None, terminals_by_vertex=None):
-
-        root_node = BranchAndBoundTreeRoot(graph, terminals, terminals_by_vertex)
-        if terminal_sets is not None:
-            root_node.combine_terminal_sets(terminal_sets)
+    def __init__(self, graph, terminals, terminals_by_vertex):
+        root_node = BranchAndBoundTreeRoot(graph, terminals)
         root_node.initial_isolating_cuts()
-
         graph = root_node.get_graph()
         self.terminals = root_node.get_terminals()
-        self.terminals_by_vertex = root_node.get_terminals_by_vertex()
 
+        self.terminals_by_vertex = terminals_by_vertex
         self.all_nodes = [BranchAndBoundTreeNode(graph, terminals, None, None)]
         self.global_lower_bound = 0.0
         self.done = False

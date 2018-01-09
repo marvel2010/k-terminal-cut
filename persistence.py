@@ -5,18 +5,8 @@ from branch_and_bound_algorithm import branch_and_bound_algorithm
 from lp_algorithm import lp_algorithm
 
 
-def main():
-    """Constructs a desired random graph and tests weak persistence on it."""
-    for _ in range(100):
-        graph, terminals = create_random_graph('barabasi_albert', 10)
-        if not test_weak_persistence(graph, terminals):
-            print(graph, terminals)
-        if not test_strong_persistence(graph, terminals):
-            print(graph, terminals)
-
-
-def test_weak_persistence(graph, terminals):
-    """Tests for WEAK persistence in graph with terminals
+def test_persistence(graph, terminals, persistence_type):
+    """Tests for WEAK or STRONG persistence in graph with terminals
 
     WEAK persistence means that values which are 1 in the LP relaxation remain 1 in
     an optimal IP solution.
@@ -33,44 +23,8 @@ def test_weak_persistence(graph, terminals):
     _, unseeded_value = branch_and_bound_algorithm(graph,
                                                    terminals)
 
-    lp_cut, _ = lp_algorithm(graph,
-                             terminals)
-
     _, seeded_value = branch_and_bound_algorithm(graph,
                                                  terminals=terminals,
-                                                 terminal_sets=lp_cut)
+                                                 persistence=persistence_type)
 
     return round(unseeded_value, 8) == round(seeded_value, 8)
-
-
-def test_strong_persistence(graph, terminals):
-    """Tests for STRONG persistence in graphs with terminals
-
-    STRONG persistence means that the values which are 0 in the LP relaxation remain 0
-    in the optimal IP solution (WEAK persistence is a consequence).
-
-    Args:
-        graph: the graph for testing strong persistence
-        terminals: the vertices in the graph which are terminals
-
-    Returns:
-        unseeded_value: the branch-and-bound optimal without any 0s fixed in advance
-        seeded_value: the branch-and-bound optimal with LP 0s fixed in advance
-    """
-
-    _, unseeded_value = branch_and_bound_algorithm(graph,
-                                                   terminals)
-
-    terminals_by_vertex, _ = lp_algorithm(graph,
-                                          terminals,
-                                          persistence_sets=True)
-
-    _, seeded_value = branch_and_bound_algorithm(graph,
-                                                 terminals=terminals,
-                                                 terminals_by_vertex=terminals_by_vertex)
-
-    return round(unseeded_value, 8) == round(seeded_value, 8)
-
-
-if __name__ == '__main__':
-    main()

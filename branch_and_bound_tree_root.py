@@ -6,18 +6,9 @@ from minimum_isolating_cut import minimum_isolating_cut
 class BranchAndBoundTreeRoot:
     """Preprocessing for multi-terminal cut"""
 
-    def __init__(self, graph, terminals, terminals_by_vertex):
+    def __init__(self, graph, terminals):
         self.graph = graph
         self.terminals = terminals
-        if terminals_by_vertex is not None:
-            self.terminals_by_vertex = terminals_by_vertex
-        else:
-            self.terminals_by_vertex = {node: terminals for node in graph.nodes()}
-
-    def combine_terminal_sets(self, terminal_sets):
-        """A set of nodes pre-assigned to a particular terminal."""
-        for terminal in self.terminals:
-            self.graph = contract_vertices_several(self.graph, terminal, terminal_sets[terminal]-{terminal})
 
     def initial_isolating_cuts(self):
         """The initial isolating cuts."""
@@ -32,6 +23,3 @@ class BranchAndBoundTreeRoot:
 
     def get_terminals(self):
         return self.terminals
-
-    def get_terminals_by_vertex(self):
-        return self.terminals_by_vertex

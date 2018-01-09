@@ -27,4 +27,5 @@ def ip_algorithm(graph,
     """
     ip_formulation = IPFormulation(graph, terminals)
     ip_formulation.solve_ip()
-    return ip_formulation.get_source_sets(), ip_formulation.get_cut_value()
+    # since we are solving in integers, weak persistence gets exactly one terminal per node
+    return ip_formulation.get_possible_terminals_by_node_weak(), ip_formulation.get_cut_value()
