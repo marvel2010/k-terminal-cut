@@ -22,10 +22,11 @@ def ip_algorithm(graph,
         print_solution: Prints solution to output.
 
     Returns:
-        dictionary of terminal to nodes associated with terminal.
-        value of the IP or LP cut.
+        source_sets: dictionary of nodes to terminal.
+        cut_value: value of the IP or LP cut.
     """
     ip_formulation = IPFormulation(graph, terminals)
     ip_formulation.solve_ip()
-    # since we are solving in integers, weak persistence gets exactly one terminal per node
-    return ip_formulation.get_possible_terminals_by_node_weak(), ip_formulation.get_cut_value()
+    source_sets = ip_formulation.get_source_sets()
+    cut_value = ip_formulation.get_cut_value()
+    return source_sets, cut_value

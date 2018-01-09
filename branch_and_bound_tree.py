@@ -48,6 +48,8 @@ class BranchAndBoundTree:
         else:
             # if there are still lonely vertices
             lonely_vertex_chosen = self._choose_lonely_node_highest_degree()
+            # self.print_source_sets()
+            # print("Lonely Vertex Chosen %s " % lonely_vertex_chosen)
 
             # choose the right set of possible terminals for this node
             self._node_with_lowest_bound\
@@ -66,22 +68,22 @@ class BranchAndBoundTree:
 
             return None
 
-    def _choose_lonely_node_random(self):
-        lonely_node_list = list(self._lonely_vertices)
-        index = np.random.randint(len(lonely_node_list))
-        return lonely_node_list[index]
-
-    def _choose_lonely_node_farthest(self):
-        used_nodes = set(self._node_with_lowest_bound.graph) - self._lonely_vertices
-        shortest_distances = {node: len(self._node_with_lowest_bound.graph)
-                              for node in self._node_with_lowest_bound.graph}
-        for used_node in used_nodes:
-            these_shortest_distances = nx.shortest_path_length(self._node_with_lowest_bound.graph,
-                                                               target=used_node)
-            for node in self._node_with_lowest_bound.graph:
-                shortest_distances[node] = min(shortest_distances[node],
-                                               these_shortest_distances[node])
-        return max(shortest_distances, key=shortest_distances.get)
+    # def _choose_lonely_node_random(self):
+    #     lonely_node_list = list(self._lonely_vertices)
+    #     index = np.random.randint(len(lonely_node_list))
+    #     return lonely_node_list[index]
+    #
+    # def _choose_lonely_node_farthest(self):
+    #     used_nodes = set(self._node_with_lowest_bound.graph) - self._lonely_vertices
+    #     shortest_distances = {node: len(self._node_with_lowest_bound.graph)
+    #                           for node in self._node_with_lowest_bound.graph}
+    #     for used_node in used_nodes:
+    #         these_shortest_distances = nx.shortest_path_length(self._node_with_lowest_bound.graph,
+    #                                                            target=used_node)
+    #         for node in self._node_with_lowest_bound.graph:
+    #             shortest_distances[node] = min(shortest_distances[node],
+    #                                            these_shortest_distances[node])
+    #     return max(shortest_distances, key=shortest_distances.get)
 
     def _choose_lonely_node_highest_degree(self):
         degrees = dict(nx.degree(self._node_with_lowest_bound.graph, weight='capacity'))
@@ -89,6 +91,11 @@ class BranchAndBoundTree:
                               for node, node_degree in degrees.items()
                               if node in self._lonely_vertices}
         return max(degrees_restricted, key=degrees_restricted.get)
+
+    def print_source_sets(self):
+        for terminal in self._terminals:
+            print("Source Sets for Terminal %s" % terminal,
+                  self._node_with_lowest_bound.graph.nodes[terminal])
 
     def solve(self, output_flag=False):
         """Solves the multi-terminal cut using the branch-and-bound algorithm.
@@ -107,7 +114,8 @@ class BranchAndBoundTree:
             if output_flag:
                 print("Expanding Node Step", i)
                 print("Objective Lower Bound", self._global_lower_bound)
-                #print("Source Sets Expanded", self.node_with_lowest_bound.source_sets)
+                self.print_source_sets()
+                print()
             i += 1
 
         final_node_source_sets = {}

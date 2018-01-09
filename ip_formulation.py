@@ -29,6 +29,7 @@ class IPFormulation():
         self.c_terminals = {}
         self.possible_terminals_by_node_weak = None
         self.possible_terminals_by_node_strong = None
+        self.source_sets = None
         self.cut_value = None
 
     def _initialize_model(self):
@@ -140,7 +141,7 @@ class IPFormulation():
         for i in self.graph.nodes():
             flag = True
             for k in self.terminals:
-                if self.x_variables[i][k].x == 1.0:
+                if round(self.x_variables[i][k].x, 8) == 1.0:
                     self.possible_terminals_by_node_weak[i].add(k)
                     flag = False
             if flag:
@@ -155,6 +156,16 @@ class IPFormulation():
             for k in self.terminals:
                 if self.x_variables[i][k].x > 0.0:
                     self.possible_terminals_by_node_strong[i].add(k)
+
+    def _calculate_source_sets(self):
+        """
+        record solution: source sets
+        """
+        self.source_sets = {terminal: set() for terminal in self.terminals}
+        for i in self.graph.nodes():
+            for k in self.terminals:
+                if round(self.x_variables[i][k].x, 8) == 1.0:
+                    self.source_sets[k].add(i)
 
     def _calculate_cut_value(self):
         """calculate: self.cut_value"""
@@ -186,6 +197,10 @@ class IPFormulation():
         """get: self.possible_terminals_by_node_strong"""
         return self.possible_terminals_by_node_strong
 
+    def get_source_sets(self):
+        """get: self.source_sets"""
+        return self.source_sets
+
     def solve_ip(self):
         """Solves the Integer Program."""
         self._initialize_model()
@@ -199,6 +214,7 @@ class IPFormulation():
         self._run_solver()
         self._calculate_possible_terminals_by_node_weak()
         self._calculate_possible_terminals_by_node_strong()
+        self._calculate_source_sets()
         self._calculate_cut_value()
 
     def solve_lp(self):
@@ -214,4 +230,5 @@ class IPFormulation():
         self._run_solver()
         self._calculate_possible_terminals_by_node_weak()
         self._calculate_possible_terminals_by_node_strong()
+        self._calculate_source_sets()
         self._calculate_cut_value()

@@ -1,13 +1,14 @@
 """Derives key properties at the Branch and Bound tree root."""
 from contract_vertices import contract_vertices_several
 from minimum_isolating_cut import minimum_isolating_cut
+from copy import deepcopy
 
 
 class BranchAndBoundTreeRoot:
     """Preprocessing for multi-terminal cut"""
 
     def __init__(self, graph, terminals):
-        self.graph = graph
+        self.graph = deepcopy(graph)
         self.terminals = terminals
 
     def initial_isolating_cuts(self):

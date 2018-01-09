@@ -98,9 +98,10 @@ class TestGraphs(unittest.TestCase):
 
     def test_graph_random(self):
         graph, terminals = create_random_graph('barabasi_albert', 100)
-        _, cut_value_bb = branch_and_bound_algorithm(graph, terminals)
-        _, cut_value_ip = ip_algorithm(graph, terminals)
+        partition_bb, cut_value_bb = branch_and_bound_algorithm(graph, terminals)
+        partition_ip, cut_value_ip = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value_bb, cut_value_ip)
+        self.assertEqual(partition_bb, partition_ip)
         self.assertTrue(test_persistence(graph, terminals, 'weak'))
         self.assertTrue(test_persistence(graph, terminals, 'strong'))
 

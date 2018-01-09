@@ -1,9 +1,9 @@
 """Defines a Node in the Branch and Bound Tree"""
 
-from itertools import chain
 from minimum_isolating_cut import minimum_isolating_cut
-from contract_vertices import contract_vertex_and_copy
+from contract_vertices import contract_vertex
 from contract_vertices import contract_vertices_several
+from copy import deepcopy
 
 
 class BranchAndBoundTreeNode:
@@ -17,12 +17,13 @@ class BranchAndBoundTreeNode:
     """
 
     def __init__(self,
-                 input_graph=None,
-                 input_terminals=None,
+                 input_graph,
+                 input_terminals,
                  new_vertex=None,
                  new_vertex_terminal=None):
 
-        self.graph = input_graph
+        # deep copy at this level is important
+        self.graph = deepcopy(input_graph)
         self.terminals = input_terminals
         self.new_vertex = new_vertex
         self.new_vertex_terminal = new_vertex_terminal
@@ -38,7 +39,7 @@ class BranchAndBoundTreeNode:
 
     def _source_set_add_vertex(self):
         # copy is required because we try adding the same vertex to several source sets
-        self.graph = contract_vertex_and_copy(self.graph, self.new_vertex_terminal, self.new_vertex)
+        self.graph = contract_vertex(self.graph, self.new_vertex_terminal, self.new_vertex)
 
     def _source_set_isolating_cut(self):
         source_set, weight = minimum_isolating_cut(self.graph,
@@ -87,6 +88,6 @@ class BranchAndBoundTreeNode:
             self._add_child(new_vertex=lonely_vertex, new_vertex_terminal=terminal)
 
     def find_lonely_vertices(self):
-        """Finds the nodes in the graph which are lonely."""
+        """Finds the vertices in the graph which are lonely."""
         lonely_vertices = set(self.graph.nodes()) - set(self.terminals)
         return lonely_vertices
