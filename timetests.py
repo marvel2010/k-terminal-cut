@@ -1,6 +1,7 @@
 """Timing/profiling tests of the branch and bound algorithm."""
 
 import random
+import numpy as np
 import cProfile
 import networkx as nx
 from branch_and_bound_algorithm import branch_and_bound_algorithm
@@ -11,26 +12,28 @@ import time
 def main():
     """cProfile for branch_and_bound_algorithm"""
 
-    graph, terminals = create_random_graph('barabasi_albert', 10000, terminal_count=4)
+    # graph, terminals = create_random_graph('barabasi_albert', 10000, terminal_count=4)
+    # assert nx.is_connected(graph), 'graph not connected'
+    # time_test_breakdown(graph, terminals)
+    # time_test_simple(graph, terminals)
 
-    assert nx.is_connected(graph), 'graph not connected'
+    time_test_simple_repeated()
 
-    time_test_breakdown(graph, terminals)
-    time_test_simple(graph, terminals)
 
-    # # WORKING
-    # partition, value = branch_and_bound_algorithm(graph.copy(), terminals)
-    # print(partition)
-    # print(value)
-    # print({t: len(partition[t]) for t in terminals})
-    # print()
-    #
-    # # WORKING
-    # partition_ip, value_ip = ip_algorithm(graph.copy(), terminals)
-    # print(partition_ip)
-    # print(value_ip)
-    # print({t: len(partition_ip[t]) for t in terminals})
-    # print()
+def time_test_simple_repeated(repeat=10):
+    times_bb, times_ip = [], []
+    for _ in range(repeat):
+        graph, terminals = create_random_graph('barabasi_albert', 10000, terminal_count=4)
+        assert nx.is_connected(graph), 'graph not connected'
+        time_bb, _, _, time_ip = time_test_simple(graph, terminals)
+        times_bb.append(time_bb)
+        times_ip.append(time_ip)
+    print("Average Time for Branch and Bound: ", np.average(times_bb), times_bb)
+    print("Median Time for Branch and Bound: ", np.median(times_bb), times_bb)
+    print("Average Time for Integer Program: ", np.average(times_ip), times_ip)
+    print("Median Time for Integer Program: ", np.median(times_ip), times_ip)
+    return np.average(times_bb), np.average(times_ip)
+
 
 def time_test_simple(graph, terminals):
     t1 = time.time()
@@ -40,20 +43,22 @@ def time_test_simple(graph, terminals):
     t2 = time.time()
     print("Time for Branch and Bound (no persistence): %s" % (t2-t1))
 
-    branch_and_bound_algorithm(graph.copy(), terminals, persistence='weak')
+    # branch_and_bound_algorithm(graph.copy(), terminals, persistence='weak')
 
     t3 = time.time()
-    print("Time for Branch and Bound (weak persistence): %s" % (t3 - t2))
+    # print("Time for Branch and Bound (weak persistence): %s" % (t3 - t2))
 
-    branch_and_bound_algorithm(graph.copy(), terminals, persistence='strong')
+    # branch_and_bound_algorithm(graph.copy(), terminals, persistence='strong')
 
     t4 = time.time()
-    print("Time for Branch and Bound (strong persistence): %s" % (t4 - t3))
+    # print("Time for Branch and Bound (strong persistence): %s" % (t4 - t3))
 
     ip_algorithm(graph.copy(), terminals)
 
     t5 = time.time()
     print("Time for Integer Program: %s" % (t5 - t4))
+
+    return t2-t1, t3-t2, t4-t3, t5-t4
 
 
 def time_test_breakdown(graph, terminals):
@@ -67,6 +72,7 @@ def time_test_breakdown(graph, terminals):
 
     cProfile.runctx("branch_and_bound_algorithm(graph, terminals)", variable_specifications, {})
     cProfile.runctx("ip_algorithm(graph, terminals)", variable_specifications, {})
+
 
 def create_random_graph(model_name, node_count, terminal_count=4):
     """Creates a random graph according to some model.

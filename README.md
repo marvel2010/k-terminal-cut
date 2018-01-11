@@ -1,11 +1,6 @@
 # k-terminal-cut
 
-Branch and Bound Algorithm based on isolating cuts for the k-terminal cut problem
-
-## Getting Started
-
-Requires Networkx
-Requires Gurobi for IP Formulation
+Branch and Bound Algorithm based on isolating cuts for the k-terminal cut problem.
 
 ## Running the tests
 
@@ -21,7 +16,7 @@ python unittests.py
 
 ## Authors
 
-* **Mark Velednitsky** - *Initial work*
+* **Mark Velednitsky**
 
 ## License
 

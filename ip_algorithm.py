@@ -16,10 +16,6 @@ def ip_algorithm(graph,
     Args:
         graph: The networkx graph for which the Multiterminal Cut Problem is to be solved.
         terminals: The nodes which are terminals in the Multiterminal Cut Problem.
-        relaxation: Solves the LP relaxation instead of the full IP.
-        dual: Includes information about the LP dual.
-        persistence_sets: Returns the terminals_by_vertex mapping.
-        print_solution: Prints solution to output.
 
     Returns:
         source_sets: dictionary of nodes to terminal.
@@ -27,6 +23,8 @@ def ip_algorithm(graph,
     """
     ip_formulation = IPFormulation(graph, terminals)
     ip_formulation.solve_ip()
+
     source_sets = ip_formulation.get_source_sets()
     cut_value = ip_formulation.get_cut_value()
+
     return source_sets, cut_value

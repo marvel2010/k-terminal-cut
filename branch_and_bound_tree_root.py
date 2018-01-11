@@ -5,24 +5,24 @@ from copy import deepcopy
 
 
 class BranchAndBoundTreeRoot:
-    """Preprocessing for multi-terminal cut"""
+    """Pre-processing for k-terminal cut problem."""
 
     def __init__(self, graph, terminals):
-        self.graph = deepcopy(graph)
-        self.terminals = terminals
+        self._graph = deepcopy(graph)
+        self._terminals = terminals
 
     def initial_isolating_cuts(self):
-        """The initial isolating cuts."""
-        for terminal in self.terminals:
-            source_set, weight = minimum_isolating_cut(self.graph,
+        """
+        Performs the initial isolating cuts.
+
+        The initial isolating cuts are the k minimum cuts that separate one terminal from the rest.
+        """
+        for terminal in self._terminals:
+            source_set, weight = minimum_isolating_cut(self._graph,
                                                        source_nodes={terminal},
-                                                       sink_nodes=set(self.terminals)-{terminal})
-            self.graph = contract_vertices_several(self.graph, terminal, source_set-{terminal})
+                                                       sink_nodes=set(self._terminals)-{terminal})
+            self._graph = contract_vertices_several(self._graph, terminal, source_set-{terminal})
 
     def get_graph(self):
         """self.graph"""
-        return self.graph
-
-    def get_terminals(self):
-        """self.terminals"""
-        return self.terminals
+        return self._graph

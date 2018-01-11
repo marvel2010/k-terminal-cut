@@ -10,10 +10,10 @@ class BranchAndBoundTreeNode:
     """Node in the branch-and-bound tree for multi-terminal cut.
 
     Attributes:
-        input_graph: a graph in which all previous isolating cuts have been merged
-        input_terminals: TODO
-        new_vertex: TODO
-        new_vertex_terminal: TODO
+        input_graph: a graph in which all previous isolating cuts have been merged to terminals
+        input_terminals: terminals in the graph
+        new_vertex: the lonely vertex to add to a terminal from the parent node
+        new_vertex_terminal: the terminal to add the lonely vertex from the parent node
     """
 
     def __init__(self,
@@ -31,7 +31,7 @@ class BranchAndBoundTreeNode:
         self.children = []
 
         # run expansions
-        if new_vertex is not None and new_vertex_terminal is not None:
+        if self.new_vertex is not None and self.new_vertex_terminal is not None:
             self._source_set_add_vertex()
             self._source_set_isolating_cut()
 
