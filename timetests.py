@@ -12,18 +12,18 @@ import time
 def main():
     """cProfile for branch_and_bound_algorithm"""
 
-    # graph, terminals = create_random_graph('barabasi_albert', 10000, terminal_count=4)
+    # graph, terminals = create_random_graph('barabasi_albert', 625, terminal_count=8)
     # assert nx.is_connected(graph), 'graph not connected'
-    # time_test_breakdown(graph, terminals)
-    # time_test_simple(graph, terminals)
+    # time_test_breakdown_branch_and_bound(graph, terminals)
+    # time_test_breakdown_ip(graph, terminals)
 
-    time_test_simple_repeated()
+    time_test_simple_repeated(repeat=5)
 
 
 def time_test_simple_repeated(repeat=10):
     times_bb, times_ip = [], []
     for _ in range(repeat):
-        graph, terminals = create_random_graph('barabasi_albert', 10000, terminal_count=4)
+        graph, terminals = create_random_graph('barabasi_albert', 1250, terminal_count=8)
         assert nx.is_connected(graph), 'graph not connected'
         time_bb, _, _, time_ip = time_test_simple(graph, terminals)
         times_bb.append(time_bb)
@@ -61,16 +61,25 @@ def time_test_simple(graph, terminals):
     return t2-t1, t3-t2, t4-t3, t5-t4
 
 
-def time_test_breakdown(graph, terminals):
+def time_test_breakdown_branch_and_bound(graph, terminals):
     """
     Runs cProfile to determine the time spent within each function.
     """
     variable_specifications = {'branch_and_bound_algorithm': branch_and_bound_algorithm,
-                               'ip_algorithm': ip_algorithm,
                                'graph': graph,
                                'terminals': terminals}
 
     cProfile.runctx("branch_and_bound_algorithm(graph, terminals)", variable_specifications, {})
+
+
+def time_test_breakdown_ip(graph, terminals):
+    """
+    Runs cProfile to determine the time spent within each function.
+    """
+    variable_specifications = {'ip_algorithm': ip_algorithm,
+                               'graph': graph,
+                               'terminals': terminals}
+
     cProfile.runctx("ip_algorithm(graph, terminals)", variable_specifications, {})
 
 
