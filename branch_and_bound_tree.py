@@ -28,6 +28,7 @@ class BranchAndBoundTree:
         self._all_nodes = None
         self._active_node = None
         self._active_node_lonely_vertices = None
+        self.nodes_explored_count = 0
 
     def _step(self):
         """One step of the branch-and-bound algorithm.
@@ -87,11 +88,9 @@ class BranchAndBoundTree:
         graph = self._root_node.get_graph()
         self._all_nodes = [BranchAndBoundTreeNode(graph, self._terminals, None, None)]
 
-        # i = 1
         while not self._done:
             self._step()
-            # print("Expanding Node Step", i)
-            # i += 1
+            self.nodes_explored_count += 1
 
         final_node_source_sets = {}
         for terminal in self._terminals:
