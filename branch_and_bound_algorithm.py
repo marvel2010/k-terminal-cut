@@ -32,4 +32,6 @@ def branch_and_bound_algorithm(graph,
         branch_and_bound_tree = BranchAndBoundTree(graph,
                                                    terminals=terminals,
                                                    terminals_by_vertex=terminals_by_vertex)
-    return branch_and_bound_tree.solve()
+
+    source_sets, cut_value = branch_and_bound_tree.solve()
+    return source_sets, cut_value
