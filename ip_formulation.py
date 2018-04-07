@@ -6,7 +6,7 @@ from gurobipy import quicksum
 
 
 class IPFormulation():
-    """Formulates the Multiterminal Cut Porblem using IP.
+    """Formulates the Multiterminal Cut Problem using IP.
 
     Vertex Variables: x_i^k for each vertex i for each set k
     Edge Variables: z_ij^k for each edge (i, j) for each set k
