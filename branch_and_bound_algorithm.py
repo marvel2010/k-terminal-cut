@@ -6,7 +6,8 @@ from lp_algorithm import lp_algorithm
 
 def branch_and_bound_algorithm(graph,
                                terminals,
-                               persistence=None):
+                               persistence=None,
+                               reporting=False):
     """
     Wrapper for solving the branch_and_bound algorithm for a given graph and terminals.
 
@@ -34,4 +35,8 @@ def branch_and_bound_algorithm(graph,
                                                    terminals_by_vertex=terminals_by_vertex)
 
     source_sets, cut_value = branch_and_bound_tree.solve()
+
+    if reporting:
+        print("Nodes Explored:", branch_and_bound_tree.nodes_explored_count)
+
     return source_sets, cut_value
