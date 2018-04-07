@@ -3,6 +3,7 @@
 from test_graphs import SmallGraphs
 from timetests import create_random_graph
 import unittest
+from minimum_isolating_cut import minimum_isolating_cut
 from branch_and_bound_algorithm import branch_and_bound_algorithm
 from ip_algorithm import ip_algorithm
 from lp_algorithm import lp_algorithm
@@ -12,6 +13,14 @@ from persistence import test_persistence
 
 class TestGraphs(unittest.TestCase):
     """Unit tests for the branch-and-bound algorithm."""
+
+    def test_isolating_cut(self):
+        test_graph = SmallGraphs()
+        test_graph.set_test_graph(7)
+        graph, terminals = test_graph.get_graph(), test_graph.get_terminals()
+        cut_source, cut_weight = minimum_isolating_cut(graph, [1], [5, 6])
+        self.assertEqual(cut_source, {1, 2, 3})
+        self.assertEqual(cut_weight, 2.0)
 
     def test_combined_vertices(self):
         test_graphs = SmallGraphs()

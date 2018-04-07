@@ -86,6 +86,16 @@ class SmallGraphs():
         self.graph.add_edges_from([(1, 2), (1, 3), (1, 4), (1, 7), (2, 5), (3, 9),
                                    (4, 5), (5, 6), (5, 8), (6, 9), (7, 9), (8, 9)], capacity=4)
 
+    def _set_test_graph_7(self):
+        """
+        the minimum isolating cut should have size 2 and should have a source set of size 3.
+        """
+        self.graph = nx.Graph()
+        self.terminals = [1, 5, 6]
+        self.graph.add_nodes_from(range(1, 7))
+        self.graph.add_edges_from([(1, 2), (3, 4), (4, 5), (4, 6)], capacity=2)
+        self.graph.add_edges_from([(2, 3)], capacity=3)
+
     def set_test_graph(self, index):
         if index == 1:
             self._set_test_graph_1()
@@ -99,6 +109,8 @@ class SmallGraphs():
             self._set_test_graph_5()
         elif index == 6:
             self._set_test_graph_6()
+        elif index == 7:
+            self._set_test_graph_7()
         else:
             raise ValueError
 
