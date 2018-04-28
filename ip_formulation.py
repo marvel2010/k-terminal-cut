@@ -131,6 +131,7 @@ class IPFormulation():
 
     def _run_solver(self):
         self.mdl.Params.LogToConsole = 0
+        self.mdl.Params.TimeLimit = 10 * 60
         self.mdl.optimize()
 
     def _calculate_possible_terminals_by_node_weak(self):
@@ -212,10 +213,11 @@ class IPFormulation():
         self._initialize_model_sense()
         self._initialize_model_update()
         self._run_solver()
-        self._calculate_possible_terminals_by_node_weak()
-        self._calculate_possible_terminals_by_node_strong()
-        self._calculate_source_sets()
-        self._calculate_cut_value()
+        if self.mdl.status == 2:
+            self._calculate_possible_terminals_by_node_weak()
+            self._calculate_possible_terminals_by_node_strong()
+            self._calculate_source_sets()
+            self._calculate_cut_value()
 
     def solve_lp(self):
         """Solves the Linear Program."""
@@ -228,7 +230,8 @@ class IPFormulation():
         self._initialize_model_sense()
         self._initialize_model_update()
         self._run_solver()
-        self._calculate_possible_terminals_by_node_weak()
-        self._calculate_possible_terminals_by_node_strong()
-        self._calculate_source_sets()
-        self._calculate_cut_value()
+        if self.mdl.status == 2:
+            self._calculate_possible_terminals_by_node_weak()
+            self._calculate_possible_terminals_by_node_strong()
+            self._calculate_source_sets()
+            self._calculate_cut_value()
