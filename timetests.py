@@ -8,6 +8,7 @@ from branch_and_bound_algorithm import branch_and_bound_algorithm
 from ip_algorithm import ip_algorithm
 from read_data import read_graph
 import time
+from spectral_clustering import suggested_terminals
 
 
 def main():
@@ -15,26 +16,47 @@ def main():
     cProfile for branch_and_bound_algorithm
     """
 
-    # graph, terminals = create_random_graph('barabasi_albert', 625, terminal_count=8)
-    # assert nx.is_connected(graph), 'graph not connected'
-    # time_test_breakdown_branch_and_bound(graph, terminals)
-    # time_test_breakdown_ip(graph, terminals)
+    model = 'powerlaw_cluster'
+    for size in range(1000, 10000, 1000):
+        time_test_synthetic_repeated(model, size, 4, repeat=5)
+        # assert nx.is_connected(graph), 'graph not connected'
 
-    for dataset in ['data/polblogs.graph', 'data/celegans_metabolic.graph']:
-        print("Now Reading Graph", dataset)
-        print()
-        graph = read_graph(dataset)
-        terminals = np.random.choice(graph.nodes, size=4, replace=False)
-        time_test_simple_repeated(graph, terminals, repeat=3)
+    # for dataset in ['data/celegans_metabolic.graph',
+    #                 'data/netscience.graph',
+    #                 'data/email.graph',
+    #                 'data/power.graph',
+    #                 'data/hep-th.graph',
+    #                 'data/polblogs.graph',
+    #                 'data/PGPGiantcompo.graph',
+    #                 'data/as-22july06.graph',
+    #                 'data/cond-mat-2003.graph',
+    #                 'data/astro-ph.graph']:
+    #     print("Now Reading Graph", dataset)
+    #     # print()
+    #     graph = read_graph(dataset)
+    #     print('Is connected?', dataset, nx.is_connected(graph))
+    #     print()
+    #     # terminals, total_degree = suggested_terminals(graph, 8)
+    #     # print("Terminals Suggested")
+    #
+    #     # Some Basic Information about the Cuts
+    #     # partition, cut_size = branch_and_bound_algorithm(graph, terminals, reporting=True)
+    #     # print("Partition Sizes:", {p: len(q) for p, q in partition.items()})
+    #     # print("Cut Size:", cut_size)
+    #
+    #     # print()
+    #     # time_test_breakdown_branch_and_bound(graph, terminals)
+    #     # time_test_breakdown_ip(graph, terminals)
 
 
-def time_test_simple_repeated(graph,
-                              terminals,
-                              repeat=5,
-                              test_bb=True,
-                              test_bb_weak=False,
-                              test_bb_strong=False,
-                              test_ip=True):
+def time_test_synthetic_repeated(model_name,
+                                 node_count,
+                                 terminal_count,
+                                 repeat=3,
+                                 test_bb=True,
+                                 test_bb_weak=False,
+                                 test_bb_strong=False,
+                                 test_ip=True):
     """
     Runs several time tests and reports average and median for each of the algorithms.
     """
@@ -42,6 +64,13 @@ def time_test_simple_repeated(graph,
     times_bb, times_bb_weak, times_bb_strong, times_ip = [], [], [], []
 
     for _ in range(repeat):
+
+        graph, _ = create_random_graph(model_name=model_name,
+                                       node_count=node_count,
+                                       terminal_count=terminal_count)
+        terminals, _ = suggested_terminals(graph=graph,
+                                           terminal_count=terminal_count)
+        print(len(graph.nodes), len(graph.edges))
 
         time_bb, time_bb_weak, time_bb_strong, time_ip = time_test_simple(graph,
                                                                           terminals,
@@ -131,7 +160,8 @@ def time_test_breakdown_branch_and_bound(graph,
                                'graph': graph,
                                'terminals': terminals}
 
-    cProfile.runctx("branch_and_bound_algorithm(graph, terminals)", variable_specifications, {})
+    cProfile.runctx("branch_and_bound_algorithm(graph, terminals)",
+                    variable_specifications, {}, sort='cumtime')
 
 
 def time_test_breakdown_ip(graph,
@@ -143,7 +173,8 @@ def time_test_breakdown_ip(graph,
                                'graph': graph,
                                'terminals': terminals}
 
-    cProfile.runctx("ip_algorithm(graph, terminals)", variable_specifications, {})
+    cProfile.runctx("ip_algorithm(graph, terminals)",
+                    variable_specifications, {}, sort='cumtime')
 
 
 def create_random_graph(model_name,
@@ -171,6 +202,9 @@ def create_random_graph(model_name,
     elif model_name == 'powerlaw_tree':
         graph = nx.random_powerlaw_tree(node_count)
     elif model_name == 'powerlaw_cluster':
+        # n = the number of nodes
+        # m = the number of random edges to add for each new node
+        # p = probability of adding a triangle after adding a random edge
         graph = nx.powerlaw_cluster_graph(node_count, 10, 0.1)
     elif model_name == 'barabasi_albert':
         graph = nx.barabasi_albert_graph(node_count, 3)
