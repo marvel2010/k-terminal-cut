@@ -20,13 +20,15 @@ class BranchAndBoundTreeNode:
                  input_graph,
                  input_terminals,
                  new_vertex=None,
-                 new_vertex_terminal=None):
+                 new_vertex_terminal=None,
+                 depth=0):
 
         # deep copy at this level is important
         self.graph = deepcopy(input_graph)
         self.terminals = input_terminals
         self.new_vertex = new_vertex
         self.new_vertex_terminal = new_vertex_terminal
+        self.depth = depth
 
         self.children = []
 
@@ -60,7 +62,8 @@ class BranchAndBoundTreeNode:
         child = BranchAndBoundTreeNode(self.graph,
                                        self.terminals,
                                        new_vertex,
-                                       new_vertex_terminal)
+                                       new_vertex_terminal,
+                                       depth=self.depth+1)
         assert child.lower_bound >= self.lower_bound, ' created bad child '
         self.children.append(child)
 

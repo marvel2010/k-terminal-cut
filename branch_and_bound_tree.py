@@ -82,9 +82,10 @@ class BranchAndBoundTree:
         for terminal in self._terminals:
             print("Source Set Size for Terminal %s" % terminal,
                   len(self._active_node.graph.nodes[terminal]['combined']))
-        print("Total Accounted Nodes",
+        print("Node Depth", self._active_node.depth)
+        print("Total Accounted Vertices",
               sum(len(self._active_node.graph.nodes[terminal]['combined']) for terminal in self._terminals))
-        print("Total Unaccounted Nodes",
+        print("Total Unaccounted Vertices",
               len(set(self._active_node.graph.nodes()) - set(self._terminals)))
         print()
 
