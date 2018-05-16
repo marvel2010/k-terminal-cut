@@ -12,14 +12,10 @@ from spectral_clustering import suggested_terminals
 
 
 def main():
-    """
-    cProfile for branch_and_bound_algorithm
-    """
 
     model = 'powerlaw_cluster'
     for size in range(1000, 10000, 1000):
         time_test_synthetic_repeated(model, size, 4, repeat=5)
-        # assert nx.is_connected(graph), 'graph not connected'
 
     # for dataset in ['data/celegans_metabolic.graph',
     #                 'data/netscience.graph',
@@ -30,19 +26,16 @@ def main():
     #                 'data/PGPGiantcompo.graph',
     #                 'data/as-22july06.graph',
     #                 'data/cond-mat-2003.graph',
-    #                 'data/astro-ph.graph']:
+    #                 'data/astro-ph.graph'
+    #                 ]:
     #     print("Now Reading Graph", dataset)
-    #     # print()
     #     graph = read_graph(dataset)
-    #     print('Is connected?', dataset, nx.is_connected(graph))
-    #     print()
-    #     # terminals, total_degree = suggested_terminals(graph, 8)
-    #     # print("Terminals Suggested")
+    #     print('Is connected?', dataset, nx.is_connected(graph), '\n')
+    #     terminals, total_degree = suggested_terminals(graph, 4)
+    #     print("Terminals Suggested. \n")
     #
     #     # Some Basic Information about the Cuts
-    #     # partition, cut_size = branch_and_bound_algorithm(graph, terminals, reporting=True)
-    #     # print("Partition Sizes:", {p: len(q) for p, q in partition.items()})
-    #     # print("Cut Size:", cut_size)
+    #     partition, cut_size = branch_and_bound_algorithm(graph, terminals, reporting=True)
     #
     #     # print()
     #     # time_test_breakdown_branch_and_bound(graph, terminals)
