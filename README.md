@@ -1,6 +1,10 @@
 # k-terminal-cut
 
-Branch and Bound Algorithm based on isolating cuts for the k-terminal cut problem.
+A Branch and Bound Algorithm based on Isolating Cuts for the k-terminal cut problem.
+
+This is research code. 
+It is a tool for studying properties of the branch-and-bound approach to the k-terminal cut problem. 
+Its performance has not been optimized for large-scale projects (greater than 100000 nodes).
 
 ## Running the tests
 
@@ -20,7 +24,7 @@ python unittests.py
 
 ## License
 
-TBD
+MIT
 
 ## Acknowledgments
 
