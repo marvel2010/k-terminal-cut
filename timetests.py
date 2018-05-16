@@ -17,21 +17,25 @@ def main():
     for size in range(1000, 10000, 1000):
         time_test_synthetic_repeated(model, size, 4, repeat=5)
 
-    # for dataset in ['data/celegans_metabolic.graph',
-    #                 'data/netscience.graph',
-    #                 'data/email.graph',
-    #                 'data/power.graph',
-    #                 'data/hep-th.graph',
-    #                 'data/polblogs.graph',
-    #                 'data/PGPGiantcompo.graph',
-    #                 'data/as-22july06.graph',
-    #                 'data/cond-mat-2003.graph',
-    #                 'data/astro-ph.graph'
-    #                 ]:
+    # for dataset in [
+    #     'data/celegans_metabolic.graph',
+    #     'data/netscience.graph',
+    #     'data/email.graph',
+    #     'data/power.graph',
+    #     'data/hep-th.graph',
+    #     'data/polblogs.graph',
+    #     'data/PGPGiantcompo.graph',
+    #     'data/as-22july06.graph',
+    #     'data/cond-mat-2003.graph',
+    #     'data/astro-ph.graph'
+    # ]:
     #     print("Now Reading Graph", dataset)
     #     graph = read_graph(dataset)
-    #     print('Is connected?', dataset, nx.is_connected(graph), '\n')
-    #     terminals, total_degree = suggested_terminals(graph, 4)
+    #     print('Is connected?', dataset, nx.is_connected(graph))
+    #     print('Vertices', len(graph.nodes))
+    #     print('Component Count', len([c for c in nx.connected_components(graph)]))
+    #     print('Max Component Size', max(len(component) for component in nx.connected_components(graph)), '\n')
+    #     terminals, total_degree = suggested_terminals(graph, 8)
     #     print("Terminals Suggested. \n")
     #
     #     # Some Basic Information about the Cuts
