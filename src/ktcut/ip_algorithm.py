@@ -1,6 +1,6 @@
 """Solves the IP Formulation of the Multiterminal Cut Problem using Gurobi."""
 
-from ip_formulation import IPFormulation
+from ktcut.ip_formulation import IPFormulation
 
 
 def ip_algorithm(graph,

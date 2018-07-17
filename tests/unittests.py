@@ -1,14 +1,15 @@
 """Unit tests of the branch and bound algorithm."""
 
-from test_graphs import SmallGraphs
-from timetests import create_random_graph
 import unittest
-from minimum_isolating_cut import minimum_isolating_cut
-from branch_and_bound_algorithm import branch_and_bound_algorithm
-from ip_algorithm import ip_algorithm
-from lp_algorithm import lp_algorithm
-from contract_vertices import contract_vertices_several
-from persistence import test_persistence
+
+from test.test_graphs import SmallGraphs
+from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+from test.timetests import create_random_graph
+from ktcut.minimum_isolating_cut import minimum_isolating_cut
+from ktcut.ip_algorithm import ip_algorithm
+from ktcut.lp_algorithm import lp_algorithm
+from ktcut.contract_vertices import contract_vertices_several
+from ktcut.persistence import test_persistence
 
 
 class TestGraphs(unittest.TestCase):

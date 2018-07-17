@@ -1,7 +1,6 @@
 """Solves the Branch and Bound Formulations of the Multiterminal Cut Problem."""
-
-from branch_and_bound_tree import BranchAndBoundTree
-from lp_algorithm import lp_algorithm
+from ktcut.lp_algorithm import lp_algorithm
+from ktcut.branch_and_bound_tree import BranchAndBoundTree
 
 
 def branch_and_bound_algorithm(graph,
@@ -9,10 +8,12 @@ def branch_and_bound_algorithm(graph,
                                persistence=None,
                                reporting=False):
     """
-    Wrapper for solving the branch_and_bound algorithm for a given graph and terminals.
+    Wrapper for solving the branch_and_bound algorithm
+        for a given graph and terminals.
 
-    The multi-terminal cut partitions the graph into sets such that each partition
-        contains exactly one terminal node and the weight of edges between sets is minimized.
+    The multi-terminal cut partitions the graph into sets
+        such that each partition contains exactly one terminal node
+        and the weight of edges between sets is minimized.
 
     Args:
         graph: the networkx graph in which to find the multi-terminal cut
@@ -24,7 +25,9 @@ def branch_and_bound_algorithm(graph,
         cut_value: the weight of the optimal multi-terminal cut
     """
     if persistence in {'strong', 'weak'}:
-        terminals_by_vertex = lp_algorithm(graph, terminals, persistence=persistence)
+        terminals_by_vertex = lp_algorithm(graph,
+                                           terminals,
+                                           persistence=persistence)
         branch_and_bound_tree = BranchAndBoundTree(graph,
                                                    terminals=terminals,
                                                    terminals_by_vertex=terminals_by_vertex)

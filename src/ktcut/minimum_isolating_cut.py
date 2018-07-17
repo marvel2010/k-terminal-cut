@@ -47,4 +47,3 @@ def minimum_isolating_cut(graph, source_nodes, sink_nodes):
     graph.remove_nodes_from(['s_node', 't_node'])
 
     return cut_source, cut_weight
-

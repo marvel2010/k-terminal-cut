@@ -1,4 +1,4 @@
-"""Formulates the LP and IP Formulations of the Multiterminal Cut Problem using Gurobi."""
+"""LP and IP Formulations of the Multiterminal Cut Problem with Gurobi."""
 
 from gurobipy import Model
 from gurobipy import GRB
@@ -127,7 +127,8 @@ class IPFormulation():
             x_k^k = 1
         """
         for k in self.terminals:
-            self.c_terminals[k] = self.mdl.addConstr(self.x_variables[k][k] == 1.0, name="init %s" % k)
+            self.c_terminals[k] = self.mdl.addConstr(self.x_variables[k][k] == 1.0,
+                                                     name="init %s" % k)
 
     def _run_solver(self):
         self.mdl.Params.LogToConsole = 0
@@ -138,7 +139,8 @@ class IPFormulation():
         """
         record solution: possible terminals by node assuming *weak* persistence
         """
-        self.possible_terminals_by_node_weak = {node: set() for node in self.graph.nodes()}
+        self.possible_terminals_by_node_weak = {node: set()
+                                                for node in self.graph.nodes()}
         for i in self.graph.nodes():
             flag = True
             for k in self.terminals:
@@ -152,7 +154,8 @@ class IPFormulation():
         """
         record solution: possible terminals by node assuming *strong* persistence
         """
-        self.possible_terminals_by_node_strong = {node: set() for node in self.graph.nodes()}
+        self.possible_terminals_by_node_strong = {node: set()
+                                                  for node in self.graph.nodes()}
         for i in self.graph.nodes():
             for k in self.terminals:
                 if self.x_variables[i][k].x > 0.0:
