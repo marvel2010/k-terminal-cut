@@ -1,5 +1,6 @@
 numpy
 networkx
+pulp
 pytest
 pytest-cov
 pytest-runner

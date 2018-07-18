@@ -1,15 +1,9 @@
-import pytest
 import networkx as nx
 import itertools as itr
-from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
-from ktcut.minimum_isolating_cut import minimum_isolating_cut
-from ktcut.ip_algorithm import ip_algorithm
-from ktcut.lp_algorithm import lp_algorithm
-from ktcut.contract_vertices import contract_vertices_several
-from ktcut.persistence import check_persistence
 
 
 def test_isolating_cut():
+    from ktcut.minimum_isolating_cut import minimum_isolating_cut
     test_graph = SmallGraphs()
     test_graph.set_test_graph(7)
     graph, terminals = test_graph.get_graph(), test_graph.get_terminals()
@@ -19,6 +13,7 @@ def test_isolating_cut():
 
 
 def test_combined_vertices():
+    from ktcut.contract_vertices import contract_vertices_several
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(1)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
@@ -27,6 +22,10 @@ def test_combined_vertices():
 
 
 def test_graph_1():
+    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.ip_algorithm import ip_algorithm
+    from ktcut.lp_algorithm import lp_algorithm
+    from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(1)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
@@ -41,6 +40,10 @@ def test_graph_1():
 
 
 def test_graph_2():
+    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.ip_algorithm import ip_algorithm
+    from ktcut.lp_algorithm import lp_algorithm
+    from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(2)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
@@ -55,6 +58,10 @@ def test_graph_2():
 
 
 def test_graph_3():
+    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.ip_algorithm import ip_algorithm
+    from ktcut.lp_algorithm import lp_algorithm
+    from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(3)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
@@ -69,6 +76,10 @@ def test_graph_3():
 
 
 def test_graph_4():
+    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.ip_algorithm import ip_algorithm
+    from ktcut.lp_algorithm import lp_algorithm
+    from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(4)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
@@ -83,6 +94,8 @@ def test_graph_4():
 
 
 def test_graph_5():
+    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.lp_algorithm import lp_algorithm
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(5)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
@@ -95,6 +108,10 @@ def test_graph_5():
 
 
 def test_graph_6():
+    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.ip_algorithm import ip_algorithm
+    from ktcut.lp_algorithm import lp_algorithm
+    from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(6)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
