@@ -34,7 +34,7 @@ def suggested_terminals(graph, terminal_count):
     for c in range(terminal_count):
         restricted_nodes = [(degree, node)
                             for node, degree in deg
-                            if sc.labels_[node-1] == c]
+                            if sc.labels_[list(graph).index(node)] == c]
         maximizer = max(restricted_nodes)
         total_degree += maximizer[0]
         terminals.append(maximizer[1])
