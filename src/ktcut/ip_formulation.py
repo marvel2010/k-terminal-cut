@@ -1,10 +1,12 @@
 """LP and IP Formulations of the Multiterminal Cut Problem."""
 
+import pulp
 from pulp import LpProblem
 from pulp import LpMinimize
 from pulp import LpVariable
 from pulp import LpInteger
 from pulp import LpContinuous
+from pulp import lpSum
 from pulp import value
 
 
@@ -21,7 +23,7 @@ class IPFormulation():
             z_{ij}^k >= x_{j}^k-x_{i}^k for all k
     """
 
-    def __init__(self, graph, terminals):
+    def __init__(self, graph, terminals, solver=None):
         self.graph = graph
         self.terminals = terminals
         self.mdl = None
@@ -31,6 +33,7 @@ class IPFormulation():
         self.possible_terminals_by_node_strong = None
         self.source_sets = None
         self.cut_value = None
+        self.solver = solver
 
     def _initialize_model(self):
         self.mdl = LpProblem("MultiTerminalCuts", LpMinimize)
@@ -79,7 +82,9 @@ class IPFormulation():
         """
         Initialize objective
         """
-        self.mdl += sum(0.5 * self.graph[i][j]['capacity'] * self.z_variables[i][j][k] for (i, j) in self.graph.edges for k in self.terminals)
+        self.mdl += lpSum(0.5 * self.graph[i][j]['capacity'] * self.z_variables[i][j][k]
+                          for (i, j) in self.graph.edges
+                          for k in self.terminals)
 
     def _initialize_contraint_nodes(self):
         """
@@ -108,7 +113,10 @@ class IPFormulation():
             self.mdl += (self.x_variables[k][k] == 1.0), 'init %s' %k
 
     def _run_solver(self):
-        self.mdl.solve()
+        if self.solver is None:
+            self.mdl.solve()
+        else:
+            self.mdl.solve(self.solver)
 
     def _calculate_possible_terminals_by_node_weak(self):
         """
