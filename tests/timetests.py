@@ -1,49 +1,51 @@
 """Timing/profiling tests of the branch and bound algorithm."""
 
 import random
-import numpy as np
 import cProfile
-import networkx as nx
-from branch_and_bound_algorithm import branch_and_bound_algorithm
-from ip_algorithm import ip_algorithm
-from read_data import read_graph
 import time
-from spectral_clustering import suggested_terminals
+
+import numpy as np
+import networkx as nx
+
+from ktcut.ip_algorithm import ip_algorithm
+from ktcut.spectral_clustering import suggested_terminals
+from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+from ktcut.read_data import read_graph
 
 
 def main():
 
-    model = 'powerlaw_cluster'
-    for size in range(1000, 10000, 1000):
-        time_test_synthetic_repeated(model, size, 4, repeat=5)
+    # model = 'powerlaw_cluster'
+    # for size in range(1000, 2000, 1000):
+    #     time_test_synthetic_repeated(model, size, 4, repeat=3)
 
-    # for dataset in [
-    #     'data/celegans_metabolic.graph',
-    #     'data/netscience.graph',
-    #     'data/email.graph',
-    #     'data/power.graph',
-    #     'data/hep-th.graph',
-    #     'data/polblogs.graph',
-    #     'data/PGPGiantcompo.graph',
-    #     'data/as-22july06.graph',
-    #     'data/cond-mat-2003.graph',
-    #     'data/astro-ph.graph'
-    # ]:
-    #     print("Now Reading Graph", dataset)
-    #     graph = read_graph(dataset)
-    #     print('Is connected?', dataset, nx.is_connected(graph))
-    #     print('Vertices', len(graph.nodes))
-    #     print('Component Count', len([c for c in nx.connected_components(graph)]))
-    #     print('Max Component Size', max(len(component) for component in nx.connected_components(graph)), '\n')
-    #     terminals, total_degree = suggested_terminals(graph, 8)
-    #     print("Terminals Suggested. \n")
-    #
-    #     # Some Basic Information about the Cuts
-    #     partition, cut_size = branch_and_bound_algorithm(graph, terminals, reporting=True)
-    #
-    #     # print()
-    #     # time_test_breakdown_branch_and_bound(graph, terminals)
-    #     # time_test_breakdown_ip(graph, terminals)
+    for dataset in [
+        'data/celegans_metabolic.graph',
+        # 'data/netscience.graph',
+        # 'data/email.graph',
+        # 'data/power.graph',
+        # 'data/hep-th.graph',
+        # 'data/polblogs.graph',
+        # 'data/PGPGiantcompo.graph',
+        # 'data/as-22july06.graph',
+        # 'data/cond-mat-2003.graph',
+        # 'data/astro-ph.graph'
+    ]:
+        print("Now Reading Graph", dataset)
+        graph = read_graph(dataset)
+        print('Is connected?', dataset, nx.is_connected(graph))
+        print('Vertices', len(graph.nodes))
+        print('Component Count', len([c for c in nx.connected_components(graph)]))
+        print('Max Component Size', max(len(component) for component in nx.connected_components(graph)), '\n')
+        terminals, total_degree = suggested_terminals(graph, 8)
+        print("Terminals Suggested. \n")
+
+        # Some Basic Information about the Cuts
+        partition, cut_size = branch_and_bound_algorithm(graph, terminals, reporting=True)
+
+        # print()
+        # time_test_breakdown_branch_and_bound(graph, terminals)
+        # time_test_breakdown_ip(graph, terminals)
 
 
 def time_test_synthetic_repeated(model_name,

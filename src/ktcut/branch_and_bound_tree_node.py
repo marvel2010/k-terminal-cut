@@ -1,19 +1,23 @@
 """Defines a Node in the Branch and Bound Tree"""
 
-from minimum_isolating_cut import minimum_isolating_cut
-from contract_vertices import contract_vertex
-from contract_vertices import contract_vertices_several
 from copy import deepcopy
+
+from ktcut.contract_vertices import contract_vertex
+from ktcut.contract_vertices import contract_vertices_several
+from ktcut.minimum_isolating_cut import minimum_isolating_cut
 
 
 class BranchAndBoundTreeNode:
     """Node in the branch-and-bound tree for multi-terminal cut.
 
     Attributes:
-        input_graph: a graph in which all previous isolating cuts have been merged to terminals
+        input_graph: a graph in which all previous isolating cuts
+            have been merged to terminals
         input_terminals: terminals in the graph
-        new_vertex: the lonely vertex to add to a terminal from the parent node
-        new_vertex_terminal: the terminal to add the lonely vertex from the parent node
+        new_vertex: the lonely vertex to add to a terminal
+            from the parent node
+        new_vertex_terminal: the terminal to add the lonely vertex
+            from the parent node
     """
 
     def __init__(self,
@@ -40,14 +44,18 @@ class BranchAndBoundTreeNode:
         self.lower_bound = self._sum_of_source_adjacent_edges()
 
     def _source_set_add_vertex(self):
-        # copy is required because we try adding the same vertex to several source sets
+        # copy required because we try adding the same vertex
+        # to several source sets
         self.graph = contract_vertex(self.graph, self.new_vertex_terminal, self.new_vertex)
 
     def _source_set_isolating_cut(self):
         source_set, weight = minimum_isolating_cut(self.graph,
                                                    source_nodes={self.new_vertex_terminal},
                                                    sink_nodes=set(self.terminals)-{self.new_vertex_terminal})
-        self.graph = contract_vertices_several(self.graph, self.new_vertex_terminal, source_set-{self.new_vertex_terminal})
+        self.graph = contract_vertices_several(self.graph,
+                                               self.new_vertex_terminal,
+                                               source_set-{self.new_vertex_terminal}
+        )
 
     def _add_child(self, new_vertex, new_vertex_terminal):
         """Creates a new child of this tree node.

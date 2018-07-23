@@ -1,6 +1,6 @@
 """Solves the LP Formulation of the Multiterminal Cut Problem using Gurobi."""
 
-from ip_formulation import IPFormulation
+from ktcut.ip_formulation import IPFormulation
 
 
 def lp_algorithm(graph,

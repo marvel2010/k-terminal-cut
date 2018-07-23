@@ -1,0 +1,10 @@
+numpy
+networkx
+pulp
+pytest
+pytest-cov
+pytest-runner
+pylint
+pycodestyle
+pydocstyle
+sklearn

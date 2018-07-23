@@ -9,8 +9,9 @@ def suggested_terminals(graph, terminal_count):
     """
     Suggests a set of terminal nodes for the given graph.
 
-    The terminals are suggested according to a two-step procedure. First, we perform a spectral
-        clustering on the graph with terminal_count clusters. Then, within each cluster, we suggest
+    The terminals are suggested according to a two-step procedure.
+        First, we perform a spectral clustering on the graph with
+        terminal_count clusters. Then, within each cluster, we suggest
         the vertex which has the highest degree.
 
     Args:
@@ -31,7 +32,9 @@ def suggested_terminals(graph, terminal_count):
     total_degree = 0
 
     for c in range(terminal_count):
-        restricted_nodes = [(degree, node) for node, degree in deg if sc.labels_[node-1] == c]
+        restricted_nodes = [(degree, node)
+                            for node, degree in deg
+                            if sc.labels_[list(graph).index(node)] == c]
         maximizer = max(restricted_nodes)
         total_degree += maximizer[0]
         terminals.append(maximizer[1])

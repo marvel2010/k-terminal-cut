@@ -1,9 +1,9 @@
 """Tests for WEAK persistence in the k-terminal-cut problem."""
 
-from branch_and_bound_algorithm import branch_and_bound_algorithm
+from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
 
 
-def test_persistence(graph, terminals, persistence_type):
+def check_persistence(graph, terminals, persistence_type):
     """Tests for WEAK or STRONG persistence in graph with terminals.
 
     WEAK persistence means that values which are 1 in the LP relaxation remain 1 in
