@@ -85,6 +85,7 @@ class BranchAndBoundTree:
             print("Source Set Size for Terminal %s" % terminal,
                   len(self._active_node.graph.nodes[terminal]['combined']))
         print("Node Depth", self._active_node.depth)
+        print("Node Bound", self._active_node._sum_of_source_adjacent_edges())
         print("Total Accounted Vertices",
               sum(len(self._active_node.graph.nodes[terminal]['combined'])
                   for terminal in self._terminals))
@@ -92,7 +93,7 @@ class BranchAndBoundTree:
               len(set(self._active_node.graph.nodes()) - set(self._terminals)))
         print()
 
-    def solve(self):
+    def solve(self, reporting=False):
         """Solves the multi-terminal cut using the branch-and-bound algorithm.
 
         Returns:
@@ -109,7 +110,8 @@ class BranchAndBoundTree:
 
         while not self._done:
             self._step()
-            # self.print_source_set_sizes()
+            if reporting:
+                self.print_source_set_sizes()
             self.nodes_explored_count += 1
 
         final_node_source_sets = {}

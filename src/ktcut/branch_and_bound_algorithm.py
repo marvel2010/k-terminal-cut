@@ -37,7 +37,7 @@ def branch_and_bound_algorithm(graph,
                                                    terminals=terminals,
                                                    terminals_by_vertex=terminals_by_vertex)
 
-    source_sets, cut_value = branch_and_bound_tree.solve()
+    source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting)
 
     if reporting:
         print("Nodes Explored:", branch_and_bound_tree.nodes_explored_count)
