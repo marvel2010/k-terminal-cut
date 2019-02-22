@@ -1,16 +1,14 @@
-""" Solves the Multiterminal Cut Problem using Branch and Bound. """
+""" Solves the k-Terminal Cut Problem with Isolation Branching. """
 from ktcut.lp_algorithm import lp_algorithm
 from ktcut.branch_and_bound_tree import BranchAndBoundTree
 
 
 def isolation_branching(graph, terminals, persistence=None, reporting=False):
-    """
-    Wrapper for solving the branch_and_bound algorithm
-        for a given graph and terminals.
+    """Solves k-Terminal Cut for given graph and terminals.
 
-    The multi-terminal cut partitions the graph into sets
+    The k-terminal cut partitions the graph into k sets
         such that each partition contains exactly one terminal node
-        and the weight of edges between sets is minimized.
+        and the total weight of edges between sets is minimized.
 
     Assumes that the graph has 'capacity' along each edge. Otherwise,
         assumes the capacity should be 1.0.
@@ -32,14 +30,12 @@ def isolation_branching(graph, terminals, persistence=None, reporting=False):
 
     if persistence in {"strong", "weak"}:
         terminals_by_vertex = lp_algorithm(graph, terminals, persistence=persistence)
-        branch_and_bound_tree = BranchAndBoundTree(
-            graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
-        )
     else:
         terminals_by_vertex = {node: terminals for node in graph.nodes()}
-        branch_and_bound_tree = BranchAndBoundTree(
-            graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
-        )
+
+    branch_and_bound_tree = BranchAndBoundTree(
+        graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
+    )
 
     source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting)
 
