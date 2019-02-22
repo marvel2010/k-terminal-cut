@@ -1,10 +1,7 @@
-numpy
-networkx
+numpy==1.15.4
+networkx==2.2
 pulp
-pytest
+pytest==4.0.2
 pytest-cov
 pytest-runner
-pylint
-pycodestyle
-pydocstyle
-sklearn
+scikit-learn==0.20.1
