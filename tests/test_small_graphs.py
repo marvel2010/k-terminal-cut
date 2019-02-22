@@ -22,14 +22,14 @@ def test_combined_vertices():
 
 
 def test_graph_1():
-    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.isolation_branching import isolation_branching
     from ktcut.ip_algorithm import ip_algorithm
     from ktcut.lp_algorithm import lp_algorithm
     from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(1)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = branch_and_bound_algorithm(graph, terminals)
+    _, cut_value = isolation_branching(graph, terminals)
     assert cut_value == 8
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 8
@@ -40,14 +40,14 @@ def test_graph_1():
 
 
 def test_graph_2():
-    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.isolation_branching import isolation_branching
     from ktcut.ip_algorithm import ip_algorithm
     from ktcut.lp_algorithm import lp_algorithm
     from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(2)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = branch_and_bound_algorithm(graph, terminals)
+    _, cut_value = isolation_branching(graph, terminals)
     assert cut_value == 8
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 8
@@ -58,14 +58,14 @@ def test_graph_2():
 
 
 def test_graph_3():
-    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.isolation_branching import isolation_branching
     from ktcut.ip_algorithm import ip_algorithm
     from ktcut.lp_algorithm import lp_algorithm
     from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(3)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = branch_and_bound_algorithm(graph, terminals)
+    _, cut_value = isolation_branching(graph, terminals)
     assert cut_value == 26
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 26
@@ -76,14 +76,14 @@ def test_graph_3():
 
 
 def test_graph_4():
-    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.isolation_branching import isolation_branching
     from ktcut.ip_algorithm import ip_algorithm
     from ktcut.lp_algorithm import lp_algorithm
     from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(4)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = branch_and_bound_algorithm(graph, terminals)
+    _, cut_value = isolation_branching(graph, terminals)
     assert cut_value == 27
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 27
@@ -94,28 +94,28 @@ def test_graph_4():
 
 
 def test_graph_5():
-    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.isolation_branching import isolation_branching
     from ktcut.lp_algorithm import lp_algorithm
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(5)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = branch_and_bound_algorithm(graph,
-                                              terminals,
-                                              persistence='strong')
+    _, cut_value = isolation_branching(graph,
+                                       terminals,
+                                       persistence='strong')
     assert cut_value == 110
     cut_value = lp_algorithm(graph, terminals)
     assert cut_value == 110
 
 
 def test_graph_6():
-    from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+    from ktcut.isolation_branching import isolation_branching
     from ktcut.ip_algorithm import ip_algorithm
     from ktcut.lp_algorithm import lp_algorithm
     from ktcut.persistence import check_persistence
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(6)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = branch_and_bound_algorithm(graph, terminals)
+    _, cut_value = isolation_branching(graph, terminals)
     assert cut_value == 27
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 27

@@ -11,7 +11,7 @@ import networkx as nx
 
 from ktcut.ip_algorithm import ip_algorithm
 from ktcut.spectral_clustering import suggested_terminals
-from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+from ktcut.isolation_branching import isolation_branching
 from ktcut.read_data import read_graph
 
 from pulp import GUROBI
@@ -157,17 +157,17 @@ def time_test_simple(graph,
     t1 = time.time()
 
     if test_bb:
-        branch_and_bound_algorithm(graph.copy(), terminals)
+        isolation_branching(graph.copy(), terminals)
 
     t2 = time.time()
 
     if test_bb_weak:
-        branch_and_bound_algorithm(graph.copy(), terminals, persistence='weak')
+        isolation_branching(graph.copy(), terminals, persistence='weak')
 
     t3 = time.time()
 
     if test_bb_strong:
-        branch_and_bound_algorithm(graph.copy(), terminals, persistence='strong')
+        isolation_branching(graph.copy(), terminals, persistence='strong')
 
     t4 = time.time()
 
@@ -189,7 +189,7 @@ def time_test_breakdown_branch_and_bound(graph,
     """
     Runs cProfile to determine the time spent within each function.
     """
-    variable_specifications = {'branch_and_bound_algorithm': branch_and_bound_algorithm,
+    variable_specifications = {'branch_and_bound_algorithm': isolation_branching,
                                'graph': graph,
                                'terminals': terminals}
 

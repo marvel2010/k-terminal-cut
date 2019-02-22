@@ -3,7 +3,7 @@
 import unittest
 
 from test.test_graphs import SmallGraphs
-from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+from ktcut.isolation_branching import isolation_branching
 from test.timetests import create_random_graph
 from ktcut.minimum_isolating_cut import minimum_isolating_cut
 from ktcut.ip_algorithm import ip_algorithm
@@ -34,7 +34,7 @@ class TestGraphs(unittest.TestCase):
         test_graphs = SmallGraphs()
         test_graphs.set_test_graph(1)
         graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-        _, cut_value = branch_and_bound_algorithm(graph, terminals)
+        _, cut_value = isolation_branching(graph, terminals)
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value, 8)
@@ -47,7 +47,7 @@ class TestGraphs(unittest.TestCase):
         test_graphs = SmallGraphs()
         test_graphs.set_test_graph(2)
         graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-        _, cut_value = branch_and_bound_algorithm(graph, terminals)
+        _, cut_value = isolation_branching(graph, terminals)
         self.assertEqual(cut_value, 8)
         _, cut_value = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value, 8)
@@ -60,7 +60,7 @@ class TestGraphs(unittest.TestCase):
         test_graphs = SmallGraphs()
         test_graphs.set_test_graph(3)
         graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-        _, cut_value = branch_and_bound_algorithm(graph, terminals)
+        _, cut_value = isolation_branching(graph, terminals)
         self.assertEqual(cut_value, 26)
         _, cut_value = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value, 26)
@@ -73,7 +73,7 @@ class TestGraphs(unittest.TestCase):
         test_graphs = SmallGraphs()
         test_graphs.set_test_graph(4)
         graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-        _, cut_value = branch_and_bound_algorithm(graph, terminals)
+        _, cut_value = isolation_branching(graph, terminals)
         self.assertEqual(cut_value, 27)
         _, cut_value = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value, 27)
@@ -86,9 +86,9 @@ class TestGraphs(unittest.TestCase):
         test_graphs = SmallGraphs()
         test_graphs.set_test_graph(5)
         graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-        _, cut_value = branch_and_bound_algorithm(graph,
-                                                  terminals,
-                                                  persistence='strong')
+        _, cut_value = isolation_branching(graph,
+                                           terminals,
+                                           persistence='strong')
         self.assertEqual(cut_value, 110)
         cut_value = lp_algorithm(graph, terminals)
         self.assertEqual(cut_value, 110)
@@ -97,7 +97,7 @@ class TestGraphs(unittest.TestCase):
         test_graphs = SmallGraphs()
         test_graphs.set_test_graph(6)
         graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-        _, cut_value = branch_and_bound_algorithm(graph, terminals)
+        _, cut_value = isolation_branching(graph, terminals)
         self.assertEqual(cut_value, 27)
         _, cut_value = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value, 27)
@@ -108,7 +108,7 @@ class TestGraphs(unittest.TestCase):
 
     def test_graph_random(self):
         graph, terminals = create_random_graph('barabasi_albert', 100)
-        partition_bb, cut_value_bb = branch_and_bound_algorithm(graph, terminals)
+        partition_bb, cut_value_bb = isolation_branching(graph, terminals)
         partition_ip, cut_value_ip = ip_algorithm(graph, terminals)
         self.assertEqual(cut_value_bb, cut_value_ip)
         self.assertEqual(partition_bb, partition_ip)

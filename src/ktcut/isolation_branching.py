@@ -3,10 +3,10 @@ from ktcut.lp_algorithm import lp_algorithm
 from ktcut.branch_and_bound_tree import BranchAndBoundTree
 
 
-def branch_and_bound_algorithm(graph,
-                               terminals,
-                               persistence=None,
-                               reporting=False):
+def isolation_branching(graph,
+                        terminals,
+                        persistence=None,
+                        reporting=False):
     """
     Wrapper for solving the branch_and_bound algorithm
         for a given graph and terminals.

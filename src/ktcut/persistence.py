@@ -1,6 +1,6 @@
 """Tests for WEAK persistence in the k-terminal-cut problem."""
 
-from ktcut.branch_and_bound_algorithm import branch_and_bound_algorithm
+from ktcut.isolation_branching import isolation_branching
 
 
 def check_persistence(graph, terminals, persistence_type):
@@ -20,12 +20,12 @@ def check_persistence(graph, terminals, persistence_type):
         test_result: TRUE if persistence holds, FALSE if it does not
     """
 
-    _, unseeded_value = branch_and_bound_algorithm(graph,
-                                                   terminals)
+    _, unseeded_value = isolation_branching(graph,
+                                            terminals)
 
-    _, seeded_value = branch_and_bound_algorithm(graph,
-                                                 terminals,
-                                                 persistence=persistence_type)
+    _, seeded_value = isolation_branching(graph,
+                                          terminals,
+                                          persistence=persistence_type)
 
     test_result = (round(unseeded_value, 8) == round(seeded_value, 8))
     return test_result
