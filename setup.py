@@ -8,7 +8,7 @@ def readme():
 
 
 def license():
-    with open('LICENSE.md') as f:
+    with open('LICENSE') as f:
         return f.read()
 
 
@@ -16,8 +16,8 @@ setup(name='ktcut',
       version='0.1dev',
       classifiers=[
           'Development Status :: 3 - Alpha',
-          'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.5',
+          'Programming Language :: Python :: 3.6',
+          'Programming Language :: Python :: 3.7',
       ],
       description='k-Terminal Cut Solver',
       keywords='',
