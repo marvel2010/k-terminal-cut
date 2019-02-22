@@ -10,7 +10,7 @@ from pulp import lpSum
 from pulp import value
 
 
-class IPFormulation():
+class IPFormulation:
     """Formulates the Multiterminal Cut Problem using IP.
 
     Vertex Variables: x_i^k for each vertex i for each set k
@@ -45,7 +45,9 @@ class IPFormulation():
         for i in self.graph.nodes():
             self.x_variables[i] = {}
             for k in self.terminals:
-                self.x_variables[i][k] = LpVariable('n %s, t %s' % (i, k), 0, 1, LpInteger)
+                self.x_variables[i][k] = LpVariable(
+                    "n %s, t %s" % (i, k), 0, 1, LpInteger
+                )
 
     def _initialize_node_variables_lp(self):
         """
@@ -54,7 +56,9 @@ class IPFormulation():
         for i in self.graph.nodes():
             self.x_variables[i] = {}
             for k in self.terminals:
-                self.x_variables[i][k] = LpVariable('n %s, t %s' % (i, k), 0, 1, LpContinuous)
+                self.x_variables[i][k] = LpVariable(
+                    "n %s, t %s" % (i, k), 0, 1, LpContinuous
+                )
 
     def _initialize_edge_variables_ip(self):
         """
@@ -65,7 +69,9 @@ class IPFormulation():
             for j in self.graph[i]:
                 self.z_variables[i][j] = {}
                 for k in self.terminals:
-                    self.z_variables[i][j][k] = LpVariable('n %s, n %s, t %s' % (i, j, k), 0, 1, LpInteger)
+                    self.z_variables[i][j][k] = LpVariable(
+                        "n %s, n %s, t %s" % (i, j, k), 0, 1, LpInteger
+                    )
 
     def _initialize_edge_variables_lp(self):
         """
@@ -76,22 +82,29 @@ class IPFormulation():
             for j in self.graph[i]:
                 self.z_variables[i][j] = {}
                 for k in self.terminals:
-                    self.z_variables[i][j][k] = LpVariable('n %s, n %s, t %s' % (i, j, k), 0, 1, LpContinuous)
+                    self.z_variables[i][j][k] = LpVariable(
+                        "n %s, n %s, t %s" % (i, j, k), 0, 1, LpContinuous
+                    )
 
     def _initialize_objective(self):
         """
         Initialize objective
         """
-        self.mdl += lpSum(0.5 * self.graph[i][j]['capacity'] * self.z_variables[i][j][k]
-                          for (i, j) in self.graph.edges
-                          for k in self.terminals)
+        self.mdl += lpSum(
+            0.5 * self.graph[i][j]["capacity"] * self.z_variables[i][j][k]
+            for (i, j) in self.graph.edges
+            for k in self.terminals
+        )
 
     def _initialize_contraint_nodes(self):
         """
         Initialize constraint sum_k{x_{i}^k} = 1
         """
         for i in self.graph.nodes():
-            self.mdl += (sum(self.x_variables[i][k] for k in self.terminals) == 1.0), 'sumNode %s' % str(i)
+            self.mdl += (
+                (sum(self.x_variables[i][k] for k in self.terminals) == 1.0),
+                "sumNode %s" % str(i),
+            )
 
     def _initialize_constraint_edges(self):
         """
@@ -101,8 +114,20 @@ class IPFormulation():
         """
         for (i, j) in self.graph.edges():
             for k in self.terminals:
-                self.mdl += (self.z_variables[i][j][k] >= self.x_variables[i][k] - self.x_variables[j][k]), 'flow %s %s %s' % (i, j, k)
-                self.mdl += (self.z_variables[i][j][k] >= self.x_variables[j][k] - self.x_variables[i][k]), 'flow %s %s %s' % (j, i, k)
+                self.mdl += (
+                    (
+                        self.z_variables[i][j][k]
+                        >= self.x_variables[i][k] - self.x_variables[j][k]
+                    ),
+                    "flow %s %s %s" % (i, j, k),
+                )
+                self.mdl += (
+                    (
+                        self.z_variables[i][j][k]
+                        >= self.x_variables[j][k] - self.x_variables[i][k]
+                    ),
+                    "flow %s %s %s" % (j, i, k),
+                )
 
     def _initialize_constraint_terminals(self):
         """
@@ -110,7 +135,7 @@ class IPFormulation():
             x_k^k = 1
         """
         for k in self.terminals:
-            self.mdl += (self.x_variables[k][k] == 1.0), 'init %s' %k
+            self.mdl += (self.x_variables[k][k] == 1.0), "init %s" % k
 
     def _run_solver(self):
         if self.solver is None:
@@ -122,8 +147,9 @@ class IPFormulation():
         """
         record solution: possible terminals by node assuming *weak* persistence
         """
-        self.possible_terminals_by_node_weak = {node: set()
-                                                for node in self.graph.nodes()}
+        self.possible_terminals_by_node_weak = {
+            node: set() for node in self.graph.nodes()
+        }
         for i in self.graph.nodes():
             flag = True
             for k in self.terminals:
@@ -137,8 +163,9 @@ class IPFormulation():
         """
         record solution: possible terminals by node assuming *strong* persistence
         """
-        self.possible_terminals_by_node_strong = {node: set()
-                                                  for node in self.graph.nodes()}
+        self.possible_terminals_by_node_strong = {
+            node: set() for node in self.graph.nodes()
+        }
         for i in self.graph.nodes():
             for k in self.terminals:
                 if self.x_variables[i][k].varValue > 0.0:

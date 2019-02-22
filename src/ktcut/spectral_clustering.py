@@ -23,7 +23,7 @@ def suggested_terminals(graph, terminal_count):
     """
     adj_matrix = nx.to_numpy_matrix(graph)
 
-    sc = SpectralClustering(n_clusters=terminal_count, affinity='precomputed')
+    sc = SpectralClustering(n_clusters=terminal_count, affinity="precomputed")
     sc.fit(adj_matrix)
 
     deg = graph.degree()
@@ -32,9 +32,11 @@ def suggested_terminals(graph, terminal_count):
     total_degree = 0
 
     for c in range(terminal_count):
-        restricted_nodes = [(degree, node)
-                            for node, degree in deg
-                            if sc.labels_[list(graph).index(node)] == c]
+        restricted_nodes = [
+            (degree, node)
+            for node, degree in deg
+            if sc.labels_[list(graph).index(node)] == c
+        ]
         maximizer = max(restricted_nodes)
         total_degree += maximizer[0]
         terminals.append(maximizer[1])

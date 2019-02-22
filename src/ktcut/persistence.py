@@ -20,12 +20,11 @@ def check_persistence(graph, terminals, persistence_type):
         test_result: TRUE if persistence holds, FALSE if it does not
     """
 
-    _, unseeded_value = isolation_branching(graph,
-                                            terminals)
+    _, unseeded_value = isolation_branching(graph, terminals)
 
-    _, seeded_value = isolation_branching(graph,
-                                          terminals,
-                                          persistence=persistence_type)
+    _, seeded_value = isolation_branching(
+        graph, terminals, persistence=persistence_type
+    )
 
-    test_result = (round(unseeded_value, 8) == round(seeded_value, 8))
+    test_result = round(unseeded_value, 8) == round(seeded_value, 8)
     return test_result

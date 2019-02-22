@@ -3,9 +3,7 @@
 from ktcut.ip_formulation import IPFormulation
 
 
-def ip_algorithm(graph,
-                 terminals,
-                 solver=None):
+def ip_algorithm(graph, terminals, solver=None):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     minimize (1/2) sum_{i,j,k}{z_{ij}^k}

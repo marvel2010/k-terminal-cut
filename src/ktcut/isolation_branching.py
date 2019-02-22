@@ -3,10 +3,7 @@ from ktcut.lp_algorithm import lp_algorithm
 from ktcut.branch_and_bound_tree import BranchAndBoundTree
 
 
-def isolation_branching(graph,
-                        terminals,
-                        persistence=None,
-                        reporting=False):
+def isolation_branching(graph, terminals, persistence=None, reporting=False):
     """
     Wrapper for solving the branch_and_bound algorithm
         for a given graph and terminals.
@@ -28,23 +25,21 @@ def isolation_branching(graph,
         cut_value: the weight of the optimal multi-terminal cut
     """
     for u, v in graph.edges:
-        if 'capacity' in graph[u][v]:
+        if "capacity" in graph[u][v]:
             continue
         else:
-            graph[u][v]['capacity'] = 1.0
+            graph[u][v]["capacity"] = 1.0
 
-    if persistence in {'strong', 'weak'}:
-        terminals_by_vertex = lp_algorithm(graph,
-                                           terminals,
-                                           persistence=persistence)
-        branch_and_bound_tree = BranchAndBoundTree(graph,
-                                                   terminals=terminals,
-                                                   terminals_by_vertex=terminals_by_vertex)
+    if persistence in {"strong", "weak"}:
+        terminals_by_vertex = lp_algorithm(graph, terminals, persistence=persistence)
+        branch_and_bound_tree = BranchAndBoundTree(
+            graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
+        )
     else:
         terminals_by_vertex = {node: terminals for node in graph.nodes()}
-        branch_and_bound_tree = BranchAndBoundTree(graph,
-                                                   terminals=terminals,
-                                                   terminals_by_vertex=terminals_by_vertex)
+        branch_and_bound_tree = BranchAndBoundTree(
+            graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
+        )
 
     source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting)
 

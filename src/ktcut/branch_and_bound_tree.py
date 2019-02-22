@@ -40,8 +40,7 @@ class BranchAndBoundTree:
 
         self._all_nodes.sort(key=lambda x: x.lower_bound, reverse=True)
         self._active_node = self._all_nodes.pop()
-        self._active_node_lonely_vertices = \
-            self._active_node.find_lonely_vertices()
+        self._active_node_lonely_vertices = self._active_node.find_lonely_vertices()
 
         if not self._active_node_lonely_vertices:
             self._done = True
@@ -52,8 +51,9 @@ class BranchAndBoundTree:
             lonely_vertex_chosen = self._choose_lonely_node_highest_degree()
 
             # choose the set of possible terminals for this node
-            self._active_node.construct_children_nodes(lonely_vertex_chosen,
-                                                       self._terminals_by_vertex[lonely_vertex_chosen])
+            self._active_node.construct_children_nodes(
+                lonely_vertex_chosen, self._terminals_by_vertex[lonely_vertex_chosen]
+            )
 
             # note: we do not need to worry about duplicate nodes
             # the nodes are constructed by forcing an assignment of
@@ -61,36 +61,49 @@ class BranchAndBoundTree:
             # can never be identical
             self._all_nodes += self._active_node.children
 
-            assert (self._active_node.lower_bound
-                    >= self._global_lower_bound), 'lower bound issue'
+            assert (
+                self._active_node.lower_bound >= self._global_lower_bound
+            ), "lower bound issue"
 
             self._global_lower_bound = self._active_node.lower_bound
             return
 
     def _choose_lonely_node_highest_degree(self):
-        degrees = dict(nx.degree(self._active_node.graph, weight='capacity'))
-        degrees_restricted = {node: node_degree
-                              for node, node_degree in degrees.items()
-                              if node in self._active_node_lonely_vertices}
+        degrees = dict(nx.degree(self._active_node.graph, weight="capacity"))
+        degrees_restricted = {
+            node: node_degree
+            for node, node_degree in degrees.items()
+            if node in self._active_node_lonely_vertices
+        }
         return max(degrees_restricted, key=degrees_restricted.get)
 
     def print_source_sets(self):
         for terminal in self._terminals:
-            print("Source Set for Terminal %s" % terminal,
-                  self._active_node.graph.nodes[terminal])
+            print(
+                "Source Set for Terminal %s" % terminal,
+                self._active_node.graph.nodes[terminal],
+            )
         print()
 
     def print_source_set_sizes(self):
         for terminal in self._terminals:
-            print("Source Set Size for Terminal %s" % terminal,
-                  len(self._active_node.graph.nodes[terminal]['combined']))
+            print(
+                "Source Set Size for Terminal %s" % terminal,
+                len(self._active_node.graph.nodes[terminal]["combined"]),
+            )
         print("Node Depth", self._active_node.depth)
         print("Node Bound", self._active_node._sum_of_source_adjacent_edges())
-        print("Total Accounted Vertices",
-              sum(len(self._active_node.graph.nodes[terminal]['combined'])
-                  for terminal in self._terminals))
-        print("Total Unaccounted Vertices",
-              len(set(self._active_node.graph.nodes()) - set(self._terminals)))
+        print(
+            "Total Accounted Vertices",
+            sum(
+                len(self._active_node.graph.nodes[terminal]["combined"])
+                for terminal in self._terminals
+            ),
+        )
+        print(
+            "Total Unaccounted Vertices",
+            len(set(self._active_node.graph.nodes()) - set(self._terminals)),
+        )
         print()
 
     def solve(self, reporting=False):
@@ -102,11 +115,7 @@ class BranchAndBoundTree:
         """
         self._root_node.initial_isolating_cuts()
         graph = self._root_node.get_graph()
-        self._all_nodes = [BranchAndBoundTreeNode(graph,
-                                                  self._terminals,
-                                                  None,
-                                                  None)
-        ]
+        self._all_nodes = [BranchAndBoundTreeNode(graph, self._terminals, None, None)]
 
         while not self._done:
             self._step()
@@ -116,9 +125,10 @@ class BranchAndBoundTree:
 
         final_node_source_sets = {}
         for terminal in self._terminals:
-            if 'combined' in self._active_node.graph.node[terminal]:
-                final_node_source_sets[terminal] = (self._active_node.graph.node[terminal]['combined']
-                                                    | {terminal})
+            if "combined" in self._active_node.graph.node[terminal]:
+                final_node_source_sets[terminal] = self._active_node.graph.node[
+                    terminal
+                ]["combined"] | {terminal}
             else:
                 final_node_source_sets[terminal] = {terminal}
 

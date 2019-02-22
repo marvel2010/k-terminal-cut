@@ -3,9 +3,7 @@
 from ktcut.ip_formulation import IPFormulation
 
 
-def lp_algorithm(graph,
-                 terminals,
-                 persistence=None):
+def lp_algorithm(graph, terminals, persistence=None):
     """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
 
     minimize (1/2) sum_{i,j,k}{z_{ij}^k}
@@ -28,9 +26,9 @@ def lp_algorithm(graph,
 
     ip_formulation.solve_lp()
 
-    if persistence == 'strong':
+    if persistence == "strong":
         return ip_formulation.get_possible_terminals_by_node_strong()
-    elif persistence == 'weak':
+    elif persistence == "weak":
         return ip_formulation.get_possible_terminals_by_node_weak()
     else:
         return ip_formulation.get_cut_value()
