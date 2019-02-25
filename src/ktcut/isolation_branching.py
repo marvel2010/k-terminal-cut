@@ -1,9 +1,9 @@
 """ Solves the k-Terminal Cut Problem with Isolation Branching. """
 from ktcut.lp_algorithm import lp_algorithm
-from ktcut.branch_and_bound_tree import BranchAndBoundTree
+from ktcut.branch_and_bound_tree import IsolationBranchingTree
 
 
-def isolation_branching(graph, terminals, persistence=None, reporting=False):
+def isolation_branching(graph, terminals, persistence=None, reporting=True):
     """Solves k-Terminal Cut for given graph and terminals.
 
     The k-terminal cut partitions the graph into k sets
@@ -34,13 +34,10 @@ def isolation_branching(graph, terminals, persistence=None, reporting=False):
     else:
         terminals_by_vertex = {node: terminals for node in graph.nodes()}
 
-    branch_and_bound_tree = BranchAndBoundTree(
+    branch_and_bound_tree = IsolationBranchingTree(
         graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
     )
 
     source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting)
-
-    if reporting:
-        print("Nodes Explored:", branch_and_bound_tree.nodes_explored_count)
 
     return source_sets, cut_value

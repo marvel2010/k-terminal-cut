@@ -20,7 +20,7 @@ from pulp import GUROBI
 def main():
 
     model = 'powerlaw_cluster'
-    for size in range(1000, 10000, 1000):
+    for size in range(1000, 2000, 1000):
         time_test_synthetic_repeated(model, size, 5, repeat=5)
 
     # for dataset in [
@@ -75,9 +75,7 @@ def time_test_synthetic_repeated(model_name,
                                  test_bb_strong=False,
                                  test_ip_cbc=False,
                                  test_ip_gurobi=True):
-    """
-    Runs several time tests and reports average and median for each of the algorithms.
-    """
+    """Runs several time tests and reports average and median for each of the algorithms."""
 
     times_bb, times_bb_weak, times_bb_strong, times_ip_cbc, times_ip_gurobi = [], [], [], [], []
 
@@ -151,9 +149,7 @@ def time_test_simple(graph,
                      test_bb_strong,
                      test_ip_cbc,
                      test_ip_gurobi):
-    """
-    Runs a single time test of each of the algorithms (B&B, B&B-weak, B&B-strong, IP).
-    """
+    """Runs a single time test of each of the algorithms (B&B, B&B-weak, B&B-strong, IP)."""
     t1 = time.time()
 
     if test_bb:
@@ -186,9 +182,7 @@ def time_test_simple(graph,
 
 def time_test_breakdown_branch_and_bound(graph,
                                          terminals):
-    """
-    Runs cProfile to determine the time spent within each function.
-    """
+    """Runs cProfile to determine the time spent within each function."""
     variable_specifications = {'branch_and_bound_algorithm': isolation_branching,
                                'graph': graph,
                                'terminals': terminals}
@@ -200,9 +194,7 @@ def time_test_breakdown_branch_and_bound(graph,
 def time_test_breakdown_ip(graph,
                            terminals,
                            solver=None):
-    """
-    Runs cProfile to determine the time spent within each function.
-    """
+    """Runs cProfile to determine the time spent within each function."""
     variable_specifications = {'ip_algorithm': ip_algorithm,
                                'graph': graph,
                                'terminals': terminals,

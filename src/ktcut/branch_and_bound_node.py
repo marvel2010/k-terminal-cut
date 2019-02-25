@@ -5,8 +5,8 @@ from ktcut.contract_vertices import contract_vertices
 from ktcut.minimum_isolating_cut import minimum_isolating_cut
 
 
-class BranchAndBoundTreeNode:
-    """Node in the branch-and-bound tree for multi-terminal cut.
+class IsolationBranchingNode:
+    """Node in the isolation branching tree for k-terminal cut.
 
     Attributes:
         input_graph: a graph in which all previous isolating cuts
@@ -22,8 +22,8 @@ class BranchAndBoundTreeNode:
         self,
         input_graph,
         input_terminals,
-        new_vertex=None,
-        new_vertex_terminal=None,
+        new_vertex,
+        new_vertex_terminal,
         depth=0,
     ):
 
@@ -41,7 +41,10 @@ class BranchAndBoundTreeNode:
             self._source_set_add_vertex()
             self._source_set_isolating_cut()
 
-        self.lower_bound = self._sum_of_source_adjacent_edges()
+        terminal_terminal_capacity, terminal_vertex_capacity = self._sum_of_terminal_adjacent_edges()
+
+        self.lower_bound = terminal_terminal_capacity + terminal_vertex_capacity / 2.0
+        self.upper_bound = terminal_terminal_capacity + terminal_vertex_capacity
 
     def _source_set_add_vertex(self):
         # copy required because we try adding the same vertex
@@ -62,7 +65,7 @@ class BranchAndBoundTreeNode:
             source_set - {self.new_vertex_terminal},
         )
 
-    def _add_child(self, new_vertex, new_vertex_terminal):
+    def _construct_child_node(self, new_vertex, new_vertex_terminal):
         """Creates a new child of this tree node.
 
         Creates a new child of this tree node by adding new_node to
@@ -72,7 +75,7 @@ class BranchAndBoundTreeNode:
             new_node: the node to be added (previously lonely)
             new_source_set: the set this new node will be added to
         """
-        child = BranchAndBoundTreeNode(
+        child = IsolationBranchingNode(
             self.graph,
             self.terminals,
             new_vertex,
@@ -82,30 +85,34 @@ class BranchAndBoundTreeNode:
         assert child.lower_bound >= self.lower_bound, "created bad child."
         self.children.append(child)
 
-    def _sum_of_source_adjacent_edges(self):
-        """
-        Calculates half the sum of the capacities of edges adjacent to terminals.
-
-        Args:
-            (None)
+    def _sum_of_terminal_adjacent_edges(self):
+        """Sum of capacities of edges adjacent to terminals.
 
         Returns:
-            capacity_sum
+            terminal_terminal_capacity_sum: total weight of edges between
+                pairs of terminals.
+            terminal_vertex_capacity_sum: total weight of edges between a
+                terminal and a non-terminal vertex.
         """
-        capacity_sum = 0
+        terminal_terminal_capacity_sum = 0.0
+        terminal_vertex_capacity_sum = 0.0
         for terminal in self.terminals:
             neighbors = self.graph[terminal]
             for neighbor in neighbors:
-                capacity_sum += self.graph[terminal][neighbor]["capacity"]
-        return capacity_sum / 2.0
+                if neighbor in self.terminals:
+                    terminal_terminal_capacity_sum += self.graph[terminal][neighbor]["capacity"]
+                else:
+                    terminal_vertex_capacity_sum += self.graph[terminal][neighbor]["capacity"]
+        return terminal_terminal_capacity_sum / 2.0, terminal_vertex_capacity_sum
 
     def construct_children_nodes(self, unassigned_vertex, allowed_terminals):
         """Runs _add_child for each possible source set."""
         assert not self.children, "children already created"
         for terminal in allowed_terminals:
-            self._add_child(new_vertex=unassigned_vertex, new_vertex_terminal=terminal)
+            self._construct_child_node(new_vertex=unassigned_vertex, new_vertex_terminal=terminal)
 
-    def find_unassigned_vertices(self):
+    @property
+    def unassigned_vertices(self) -> set:
         """Finds the vertices in the graph which are unassigned."""
         unassigned_vertices = set(self.graph.nodes()) - set(self.terminals)
         return unassigned_vertices

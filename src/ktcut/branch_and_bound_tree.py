@@ -1,31 +1,32 @@
 """Defines the overall Branch and Bound Tree for Isolation Branching."""
 import networkx as nx
-from ktcut.branch_and_bound_tree_node import BranchAndBoundTreeNode
-from ktcut.branch_and_bound_tree_root import BranchAndBoundTreeRoot
+import numpy as np
+from ktcut.branch_and_bound_node import IsolationBranchingNode
+from ktcut.branch_and_bound_root import IsolationBranchingRoot
 
 
-class BranchAndBoundTree:
-    """Tree for multi-terminal cut
+class IsolationBranchingTree:
+    """Tree for isolation branching for k-terminal cut.
 
     Attributes:
         terminals: the set of terminals
         _root_node: the root node of the branch and bound tree
         _all_nodes: a list of all nodes in the tree
-        _global_lower_bound: the best lower bound on the objective so far
+        _best_lower_bound: the best lower bound on the objective so far
+        _best_upper_bound: the best feasible solution so far
         _done: if the algorithm terminated
         _active_node: the node which is currently being considered
-        _active_node_unassigned_vertices: the set of vertices unassigned at the current node
     """
 
     def __init__(self, graph, terminals, terminals_by_vertex):
-        self._root_node = BranchAndBoundTreeRoot(graph, terminals)
+        self._root_node = IsolationBranchingRoot(graph, terminals)
         self._terminals = terminals
         self._terminals_by_vertex = terminals_by_vertex
-        self._global_lower_bound = 0.0
+        self._best_lower_bound = 0.0
+        self._best_upper_bound = np.inf
         self._done = False
         self._all_nodes = None
         self._active_node = None
-        self._active_node_unassigned_vertices = None
         self.nodes_explored_count = 0
 
     def _step(self):
@@ -38,15 +39,15 @@ class BranchAndBoundTree:
 
         self._all_nodes.sort(key=lambda x: x.lower_bound, reverse=True)
         self._active_node = self._all_nodes.pop()
-        self._active_node_unassigned_vertices = self._active_node.find_unassigned_vertices()
 
-        if self._active_node_unassigned_vertices:
+        if self._active_node.unassigned_vertices:
             # if there are still unassigned vertices, we branch
             unassigned_vertex_chosen = self._choose_unassigned_vertex_highest_degree()
 
             # choose the set of possible terminals for this node
             self._active_node.construct_children_nodes(
-                unassigned_vertex_chosen, self._terminals_by_vertex[unassigned_vertex_chosen]
+                unassigned_vertex_chosen,
+                self._terminals_by_vertex[unassigned_vertex_chosen],
             )
 
             # note: we do not need to worry about duplicate nodes
@@ -56,10 +57,13 @@ class BranchAndBoundTree:
             self._all_nodes += self._active_node.children
 
             assert (
-                self._active_node.lower_bound >= self._global_lower_bound
+                self._active_node.lower_bound >= self._best_lower_bound
             ), "lower bound issue"
 
-            self._global_lower_bound = self._active_node.lower_bound
+            if self._active_node.lower_bound > self._best_lower_bound:
+                self._best_lower_bound = self._active_node.lower_bound
+            if self._active_node.upper_bound < self._best_upper_bound:
+                self._best_upper_bound = self._active_node.upper_bound
         else:
             # if there are no unassigned vertices, we are at a leaf node
             self._done = True
@@ -69,41 +73,30 @@ class BranchAndBoundTree:
         degrees_restricted = {
             node: node_degree
             for node, node_degree in degrees.items()
-            if node in self._active_node_unassigned_vertices
+            if node in self._active_node.unassigned_vertices
         }
         return max(degrees_restricted, key=degrees_restricted.get)
 
-    def print_source_sets(self):
-        for terminal in self._terminals:
-            print(
-                "Source Set for Terminal %s" % terminal,
-                self._active_node.graph.nodes[terminal],
-            )
-        print()
-
-    def print_source_set_sizes(self):
-        for terminal in self._terminals:
-            print(
-                "Source Set Size for Terminal %s" % terminal,
-                len(self._active_node.graph.nodes[terminal]["combined"]),
-            )
-        print("Node Depth", self._active_node.depth)
-        print("Node Bound", self._active_node._sum_of_source_adjacent_edges())
-        print(
-            "Total Accounted Vertices",
-            sum(
-                len(self._active_node.graph.nodes[terminal]["combined"])
+    def report(self):
+        report_items = {
+            "Source Set Sizes": {
+                terminal: len(self._active_node.graph.nodes[terminal]["combined"])
                 for terminal in self._terminals
+            },
+            "Node Depth": self._active_node.depth,
+            "Node Lower Bound": self._active_node.lower_bound,
+            "Node Upper Bound": self._active_node.upper_bound,
+            "Total Unassigned Vertices": len(
+                set(self._active_node.graph.nodes()) - set(self._terminals)
             ),
-        )
-        print(
-            "Total Unaccounted Vertices",
-            len(set(self._active_node.graph.nodes()) - set(self._terminals)),
-        )
-        print()
+            "Best Lower Bound": self._best_lower_bound,
+            "Best Upper Bound": self._best_upper_bound,
+            "Nodes Explored": self.nodes_explored_count
+        }
+        return report_items
 
     def solve(self, reporting=False):
-        """Solves the multi-terminal cut using the branch-and-bound algorithm.
+        """Solves k-terminal cut using isolation branching.
 
         Returns:
             source_sets: the nodes that remain connected to each terminal
@@ -111,13 +104,13 @@ class BranchAndBoundTree:
         """
         self._root_node.initial_isolating_cuts()
         graph = self._root_node.get_graph()
-        self._all_nodes = [BranchAndBoundTreeNode(graph, self._terminals, None, None)]
+        self._all_nodes = [IsolationBranchingNode(graph, self._terminals, None, None)]
 
         while not self._done:
             self._step()
-            if reporting:
-                self.print_source_set_sizes()
             self.nodes_explored_count += 1
+            if reporting:
+                print(self.report())
 
         final_node_source_sets = {}
         for terminal in self._terminals:

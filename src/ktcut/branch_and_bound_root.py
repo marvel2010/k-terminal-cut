@@ -4,8 +4,8 @@ from ktcut.contract_vertices import contract_vertices
 from ktcut.minimum_isolating_cut import minimum_isolating_cut
 
 
-class BranchAndBoundTreeRoot:
-    """Pre-processing for k-terminal cut problem."""
+class IsolationBranchingRoot:
+    """Pre-processing for isolation branching for k-terminal cut."""
 
     def __init__(self, graph, terminals):
         self._graph = deepcopy(graph)
@@ -14,7 +14,7 @@ class BranchAndBoundTreeRoot:
     def initial_isolating_cuts(self):
         """Performs the initial isolating cuts.
 
-        The initial isolating cuts are the k minimum cuts
+        The initial isolating cuts are the k minimum (s,t)-cuts
             that separate one terminal from the rest.
         """
         for terminal in self._terminals:
@@ -28,5 +28,4 @@ class BranchAndBoundTreeRoot:
             )
 
     def get_graph(self):
-        """self.graph"""
         return self._graph
