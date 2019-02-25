@@ -1,7 +1,6 @@
-"""Derives key properties at the Branch and Bound tree root."""
+"""Defines a Root in the Branch and Bound Tree for Isolation Branching."""
 from copy import deepcopy
-
-from ktcut.contract_vertices import contract_vertices_several
+from ktcut.contract_vertices import contract_vertices
 from ktcut.minimum_isolating_cut import minimum_isolating_cut
 
 
@@ -13,8 +12,7 @@ class BranchAndBoundTreeRoot:
         self._terminals = terminals
 
     def initial_isolating_cuts(self):
-        """
-        Performs the initial isolating cuts.
+        """Performs the initial isolating cuts.
 
         The initial isolating cuts are the k minimum cuts
             that separate one terminal from the rest.
@@ -25,7 +23,7 @@ class BranchAndBoundTreeRoot:
                 source_vertices={terminal},
                 sink_vertices=set(self._terminals) - {terminal},
             )
-            self._graph = contract_vertices_several(
+            self._graph = contract_vertices(
                 self._graph, terminal, source_set - {terminal}
             )
 

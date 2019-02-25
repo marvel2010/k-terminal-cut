@@ -1,9 +1,7 @@
-"""Defines a Node in the Branch and Bound Tree"""
-
+"""Defines a Node in the Branch and Bound Tree for Isolation Branching."""
 from copy import deepcopy
-
 from ktcut.contract_vertices import contract_vertex
-from ktcut.contract_vertices import contract_vertices_several
+from ktcut.contract_vertices import contract_vertices
 from ktcut.minimum_isolating_cut import minimum_isolating_cut
 
 
@@ -58,7 +56,7 @@ class BranchAndBoundTreeNode:
             source_vertices={self.new_vertex_terminal},
             sink_vertices=set(self.terminals) - {self.new_vertex_terminal},
         )
-        self.graph = contract_vertices_several(
+        self.graph = contract_vertices(
             self.graph,
             self.new_vertex_terminal,
             source_set - {self.new_vertex_terminal},
@@ -81,7 +79,7 @@ class BranchAndBoundTreeNode:
             new_vertex_terminal,
             depth=self.depth + 1,
         )
-        assert child.lower_bound >= self.lower_bound, " created bad child "
+        assert child.lower_bound >= self.lower_bound, "created bad child."
         self.children.append(child)
 
     def _sum_of_source_adjacent_edges(self):
@@ -99,15 +97,15 @@ class BranchAndBoundTreeNode:
             neighbors = self.graph[terminal]
             for neighbor in neighbors:
                 capacity_sum += self.graph[terminal][neighbor]["capacity"]
-        return capacity_sum / 2
+        return capacity_sum / 2.0
 
-    def construct_children_nodes(self, lonely_vertex, allowed_terminals):
+    def construct_children_nodes(self, unassigned_vertex, allowed_terminals):
         """Runs _add_child for each possible source set."""
         assert not self.children, "children already created"
         for terminal in allowed_terminals:
-            self._add_child(new_vertex=lonely_vertex, new_vertex_terminal=terminal)
+            self._add_child(new_vertex=unassigned_vertex, new_vertex_terminal=terminal)
 
-    def find_lonely_vertices(self):
-        """Finds the vertices in the graph which are lonely."""
-        lonely_vertices = set(self.graph.nodes()) - set(self.terminals)
-        return lonely_vertices
+    def find_unassigned_vertices(self):
+        """Finds the vertices in the graph which are unassigned."""
+        unassigned_vertices = set(self.graph.nodes()) - set(self.terminals)
+        return unassigned_vertices

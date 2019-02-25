@@ -13,11 +13,11 @@ def test_isolating_cut():
 
 
 def test_combined_vertices():
-    from ktcut.contract_vertices import contract_vertices_several
+    from ktcut.contract_vertices import contract_vertices
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(1)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    graph = contract_vertices_several(graph, 1, {5, 7, 8})
+    graph = contract_vertices(graph, 1, {5, 7, 8})
     assert graph[1][6]['capacity'] == 4
 
 

@@ -1,7 +1,5 @@
-"""Defines the overall branch and bound tree."""
-
+"""Defines the overall Branch and Bound Tree for Isolation Branching."""
 import networkx as nx
-
 from ktcut.branch_and_bound_tree_node import BranchAndBoundTreeNode
 from ktcut.branch_and_bound_tree_root import BranchAndBoundTreeRoot
 
@@ -11,12 +9,12 @@ class BranchAndBoundTree:
 
     Attributes:
         terminals: the set of terminals
-        root_node: the root node of the branch and bound tree
-        all_nodes: a list of all nodes in the tree
-        global_lower_bound: the best lower bound on the objective so far
-        done: if the algorithm terminated
-        node_with_lowest_bound: the node which is currently being considered
-        lonely_vertices: the set of vertices lonely at the current node
+        _root_node: the root node of the branch and bound tree
+        _all_nodes: a list of all nodes in the tree
+        _global_lower_bound: the best lower bound on the objective so far
+        _done: if the algorithm terminated
+        _active_node: the node which is currently being considered
+        _active_node_unassigned_vertices: the set of vertices unassigned at the current node
     """
 
     def __init__(self, graph, terminals, terminals_by_vertex):
@@ -27,32 +25,28 @@ class BranchAndBoundTree:
         self._done = False
         self._all_nodes = None
         self._active_node = None
-        self._active_node_lonely_vertices = None
+        self._active_node_unassigned_vertices = None
         self.nodes_explored_count = 0
 
     def _step(self):
         """One step of the branch-and-bound algorithm.
 
-        (1) Picks the node with the lowest lower bound
-        (2) Finds a lonely vertex
-        (3) Creates new tree nodes
+            (1) Picks the node with the lowest lower bound
+            (2) Finds an unassigned vertex
+            (3) Creates new tree nodes
         """
 
         self._all_nodes.sort(key=lambda x: x.lower_bound, reverse=True)
         self._active_node = self._all_nodes.pop()
-        self._active_node_lonely_vertices = self._active_node.find_lonely_vertices()
+        self._active_node_unassigned_vertices = self._active_node.find_unassigned_vertices()
 
-        if not self._active_node_lonely_vertices:
-            self._done = True
-            return
-
-        else:
-            # if there are still lonely vertices
-            lonely_vertex_chosen = self._choose_lonely_node_highest_degree()
+        if self._active_node_unassigned_vertices:
+            # if there are still unassigned vertices, we branch
+            unassigned_vertex_chosen = self._choose_unassigned_vertex_highest_degree()
 
             # choose the set of possible terminals for this node
             self._active_node.construct_children_nodes(
-                lonely_vertex_chosen, self._terminals_by_vertex[lonely_vertex_chosen]
+                unassigned_vertex_chosen, self._terminals_by_vertex[unassigned_vertex_chosen]
             )
 
             # note: we do not need to worry about duplicate nodes
@@ -66,14 +60,16 @@ class BranchAndBoundTree:
             ), "lower bound issue"
 
             self._global_lower_bound = self._active_node.lower_bound
-            return
+        else:
+            # if there are no unassigned vertices, we are at a leaf node
+            self._done = True
 
-    def _choose_lonely_node_highest_degree(self):
+    def _choose_unassigned_vertex_highest_degree(self):
         degrees = dict(nx.degree(self._active_node.graph, weight="capacity"))
         degrees_restricted = {
             node: node_degree
             for node, node_degree in degrees.items()
-            if node in self._active_node_lonely_vertices
+            if node in self._active_node_unassigned_vertices
         }
         return max(degrees_restricted, key=degrees_restricted.get)
 
