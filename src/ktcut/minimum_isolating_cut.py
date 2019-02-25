@@ -2,21 +2,18 @@
 
 import networkx as nx
 
-# from networkx.algorithms.flow import edmonds_karp
 from networkx.algorithms.flow import preflow_push
 
-# from networkx.algorithms.flow import shortest_augmenting_path
 
-
-def minimum_isolating_cut(graph, source_nodes, sink_nodes):
+def minimum_isolating_cut(graph, source_vertices, sink_vertices):
     """Compute a minimum isolating cut in G.
 
     The minimum isolating cut is a cut which separates all the source_nodes from all the sink_nodes.
 
     Params:
         graph: the graph G in which to compute the minimum isolating cut
-        source_nodes: the nodes which are required to fall in the source set
-        sink_nodes: the nodes which are required to fall in the sink set
+        source_vertices: vertices required to fall in the source set
+        sink_vertices: vertices required to fall in the sink set
 
     Returns:
         cut_source: the source set of the isolating cut
@@ -26,9 +23,9 @@ def minimum_isolating_cut(graph, source_nodes, sink_nodes):
     # construct auxiliary graph with super-source and super-sink nodes
     graph.add_nodes_from(["s_node", "t_node"])
     graph.add_edges_from(
-        [("s_node", source_adj_node) for source_adj_node in source_nodes]
+        [("s_node", source_adj_node) for source_adj_node in source_vertices]
     )
-    graph.add_edges_from([(sink_adj_node, "t_node") for sink_adj_node in sink_nodes])
+    graph.add_edges_from([(sink_adj_node, "t_node") for sink_adj_node in sink_vertices])
 
     # find the residual graph after running a maximum flow algorithm
     residual = preflow_push(graph, "s_node", "t_node")

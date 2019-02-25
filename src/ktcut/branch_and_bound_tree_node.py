@@ -55,8 +55,8 @@ class BranchAndBoundTreeNode:
     def _source_set_isolating_cut(self):
         source_set, weight = minimum_isolating_cut(
             self.graph,
-            source_nodes={self.new_vertex_terminal},
-            sink_nodes=set(self.terminals) - {self.new_vertex_terminal},
+            source_vertices={self.new_vertex_terminal},
+            sink_vertices=set(self.terminals) - {self.new_vertex_terminal},
         )
         self.graph = contract_vertices_several(
             self.graph,

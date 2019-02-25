@@ -12,7 +12,7 @@ import networkx as nx
 from ktcut.ip_algorithm import ip_algorithm
 from ktcut.spectral_clustering import suggested_terminals
 from ktcut.isolation_branching import isolation_branching
-from ktcut.read_data import read_graph
+from ktcut.read_data import read_dimacs_graph
 
 from pulp import GUROBI
 

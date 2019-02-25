@@ -17,6 +17,7 @@ def isolation_branching(graph, terminals, persistence=None, reporting=False):
         graph: the networkx graph in which to find the multi-terminal cut
         terminals: the terminals of the networkx graph
         persistence: if persistence is assumed [strong, weak, None]
+        reporting: if the branching solver should print results as it goes
 
     Returns:
         source_sets: the partition of the nodes of the graph which defines the minimum cut

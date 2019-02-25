@@ -1,4 +1,4 @@
-"""LP and IP Formulations of the Multiterminal Cut Problem."""
+"""LP and IP Formulations of the k-Terminal Cut Problem."""
 
 import pulp
 from pulp import LpProblem
@@ -11,7 +11,7 @@ from pulp import value
 
 
 class IPFormulation:
-    """Formulates the Multiterminal Cut Problem using IP.
+    """Formulates the k-Terminal Cut Problem as an Integer Program.
 
     Vertex Variables: x_i^k for each vertex i for each set k
     Edge Variables: z_ij^k for each edge (i, j) for each set k

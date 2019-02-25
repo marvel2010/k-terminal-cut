@@ -22,8 +22,8 @@ class BranchAndBoundTreeRoot:
         for terminal in self._terminals:
             source_set, weight = minimum_isolating_cut(
                 self._graph,
-                source_nodes={terminal},
-                sink_nodes=set(self._terminals) - {terminal},
+                source_vertices={terminal},
+                sink_vertices=set(self._terminals) - {terminal},
             )
             self._graph = contract_vertices_several(
                 self._graph, terminal, source_set - {terminal}

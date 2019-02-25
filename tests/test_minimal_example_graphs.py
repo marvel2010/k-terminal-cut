@@ -1,4 +1,4 @@
-""" Test Graph. """
+"""Test README example."""
 
 
 def test_graph_tutte():

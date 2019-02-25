@@ -1,10 +1,8 @@
 import networkx as nx
 
 
-def read_graph(filename):
-    """
-    Read a graph from a file in the format specified for the DIMACS challenge.
-    """
+def read_dimacs_graph(filename):
+    """Read a graph from DIMACS format."""
     graph = nx.Graph()
     f = open(filename)
     count = 0

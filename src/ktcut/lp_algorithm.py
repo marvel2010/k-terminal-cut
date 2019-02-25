@@ -1,10 +1,10 @@
-"""Solves the LP Formulation of the Multiterminal Cut Problem using Gurobi."""
+"""Solves the LP Formulation of the k-Terminal Cut Problem."""
 
 from ktcut.ip_formulation import IPFormulation
 
 
-def lp_algorithm(graph, terminals, persistence=None):
-    """Solves the IP formulation of the Multiterminal Cut Problem using Gurobi.
+def lp_algorithm(graph, terminals, persistence=None, solver=None):
+    """Solves the LP formulation of the k-Terminal Cut Problem.
 
     minimize (1/2) sum_{i,j,k}{z_{ij}^k}
         such that
@@ -13,17 +13,17 @@ def lp_algorithm(graph, terminals, persistence=None):
             z_{ij}^k >= x_{j}^k-x_{i}^k for all k
 
     Args:
-        graph: The networkx graph for which the Multiterminal Cut Problem is to be solved.
-        terminals: The nodes which are terminals in the Multiterminal Cut Problem.
-        strong_persistence: TODO
+        graph: The networkx graph for which the k-Terminal Cut problem is to be solved.
+        terminals: The vertices which are terminals in the k-Terminal Cut problem.
+        persistence: If `strong', assumes that 0s and 1s are persistent. If
+            'weak', assumes only 0s are persistent.
+        solver: which solver to use to solve the LP.
 
     Returns:
         dictionary of possible_terminals_by_node.
         value of the IP or LP cut.
     """
-
-    ip_formulation = IPFormulation(graph, terminals)
-
+    ip_formulation = IPFormulation(graph, terminals, solver)
     ip_formulation.solve_lp()
 
     if persistence == "strong":
