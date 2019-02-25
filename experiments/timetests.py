@@ -13,57 +13,92 @@ from ktcut.ip_algorithm import ip_algorithm
 from ktcut.spectral_clustering import suggested_terminals
 from ktcut.isolation_branching import isolation_branching
 from ktcut.read_data import read_dimacs_graph
+from ktcut.read_data import read_konect_graph
 
 from pulp import GUROBI
+
+DIMACS_DATASETS = [
+    # 'data/dimacs/adjnoun.graph',  # bad with 10
+    'data/dimacs/polbooks.graph',
+    # 'data/dimacs/football.graph',  # unclear with 10
+    # 'data/dimacs/netscience.graph',  # old
+    # 'data/dimacs/celegans_metabolic.graph',  # old
+    'data/dimacs/jazz.graph',  # unclear with 10
+    # 'data/dimacs/email.graph',
+    # 'data/dimacs/power.graph',  # old
+    # 'data/dimacs/hep-th.graph',  # old
+    # 'data/dimacs/polblogs.graph',
+    # 'data/dimacs/PGPGiantcompo.graph',  # old
+    # 'data/dimacs/as-22july06.graph',  # old
+    # 'data/dimacs/astro-ph.graph'  # old
+]
+
+KONECT_DATASETS = [
+    # 'data/konect/out.arenas-email',
+    'data/konect/out.arenas-jazz',
+    # 'data/konect/out.arenas-pgp',
+    # 'data/konect/out.as20000102',
+    # 'data/konect/out.as-caida20071105',
+    # 'data/konect/out.ca-AstroPh',
+    # 'data/konect/out.com-amazon',
+    # 'data/konect/out.com-dblp',
+    # 'data/konect/out.douban',
+    # 'data/konect/out.ego-facebook',
+    # 'data/konect/out.livemocha',
+    # 'data/konect/out.loc-brightkite_edges',
+    # 'data/konect/out.log-gowalla_edges',
+    # 'data/konect/out.maayan-pdzbase',
+    # 'data/konect/out.maayan-vidal',
+    # 'data/konect/out.moreno_propro_propro',
+    # 'data/konect/out.opsahl-powergrid',
+    # 'data/konect/out.petster-friendships-hamster-uniq',
+    # 'data/konect/out.petster-hamster',
+    # 'data/konect/out.reactome',
+    # 'data/konect/out.subelj_euroroad_euroroad',
+    # 'data/konect/out.tntp-ChicagoRegional',
+    # 'data/konect/out.wordnet-words'
+]
 
 
 def main():
 
-    model = 'powerlaw_cluster'
-    for size in range(1000, 2000, 1000):
-        time_test_synthetic_repeated(model, size, 5, repeat=5)
+    # model = 'powerlaw_cluster'
+    # for size in range(1000, 2000, 1000):
+    #     time_test_synthetic_repeated(model, size, 5, repeat=5)
 
-    # for dataset in [
-    #     # 'data/adjnoun.graph',  # bad with 10
-    #     # 'data/polbooks.graph',
-    #     # 'data/football.graph',  # unclear with 10
-    #     # 'data/netscience.graph',  # old
-    #     # 'data/celegans_metabolic.graph',  # old
-    #     # 'data/jazz.graph',  # unclear with 10
-    #     # 'data/email.graph',
-    #     'data/power.graph',  # old
-    #     'data/hep-th.graph',  # old
-    #     # 'data/polblogs.graph',
-    #     'data/PGPGiantcompo.graph',  # old
-    #     'data/as-22july06.graph',  # old
-    #     'data/astro-ph.graph'  # old
-    # ]:
-    #     print("Now Reading Graph", dataset)
-    #     graph = read_graph(dataset)
-    #     print("Determining Largest Connected Component")
-    #     largest_cc = max(nx.connected_components(graph), key=len)
-    #     graph_prime = graph.subgraph(largest_cc).copy()
-    #     print('Vertex Count', len(graph_prime.nodes))
-    #     print('Edge Count', len(graph_prime.edges))
-    #
-    #     terminals, total_degree = suggested_terminals(graph_prime, 10)
-    #     print('Terminals Suggested.')
-    #
-    #     # nx.draw_networkx(graph_prime)
-    #     # plt.show()
-    #
-    #     bb_time, _, _, ip_time_cbc, ip_time_gurobi = time_test_simple(graph_prime,
-    #                                                                   terminals,
-    #                                                                   True,
-    #                                                                   False,
-    #                                                                   False,
-    #                                                                   False,
-    #                                                                   True)
-    #
-    #     print('bb time', bb_time)
-    #     # print('ip time cbc', ip_time_cbc)
-    #     print('ip time gurobi', ip_time_gurobi)
-    #     print()
+    # graph_reader = read_dimacs_graph
+    graph_reader = read_konect_graph
+
+    for dataset in KONECT_DATASETS:
+        graph = graph_reader(dataset)
+        # Restrict to Largest Connected Component
+        largest_cc = max(nx.connected_components(graph), key=len)
+        graph_prime = graph.subgraph(largest_cc).copy()
+        # Suggest Terminals
+        terminals, total_degree = suggested_terminals(graph_prime, 5)
+        information = {
+            "Graph Name": dataset,
+            "Vertex Count": len(graph_prime.nodes),
+            "Edge Count": len(graph_prime.nodes),
+            "Terminals": terminals,
+            "Total Terminal Degree": total_degree
+        }
+        print(information)
+
+        # nx.draw_networkx(graph_prime)
+        # plt.show()
+
+        bb_time, _, _, _, ip_time_gurobi = time_test_simple(graph_prime,
+                                                            terminals,
+                                                            True,
+                                                            False,
+                                                            False,
+                                                            False,
+                                                            True)
+
+        print("bb time", bb_time)
+        print("ip time gurobi", ip_time_gurobi)
+        print()
 
 
 def time_test_synthetic_repeated(model_name,

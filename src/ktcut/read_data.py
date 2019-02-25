@@ -19,7 +19,7 @@ def read_dimacs_graph(filename):
     for line in f:
         if count:
             for neighbor in line.split():
-                graph.add_edge(count, int(neighbor))
+                graph.add_edge(count, int(neighbor), capacity=1.0)
         else:
             node_count, edge_count, _ = line.split()
             graph.add_nodes_from(range(1, int(node_count) + 1))
@@ -59,7 +59,7 @@ def read_konect_graph(filename):
             .replace("\t", " ")
             .split(" ")
         )
-        graph.add_edge(int(line_edge[0]), int(line_edge[1]))
+        graph.add_edge(int(line_edge[0]), int(line_edge[1]), capacity=1.0)
 
     graph.remove_edges_from(nx.selfloop_edges(graph))
 
