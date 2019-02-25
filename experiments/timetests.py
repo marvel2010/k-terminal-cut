@@ -34,29 +34,29 @@ DIMACS_DATASETS = [
 ]
 
 KONECT_DATASETS = [
-    # 'data/konect/out.arenas-email',
-    'data/konect/out.arenas-jazz',
-    # 'data/konect/out.arenas-pgp',
-    # 'data/konect/out.as20000102',
-    # 'data/konect/out.as-caida20071105',
-    # 'data/konect/out.ca-AstroPh',
-    # 'data/konect/out.com-amazon',
-    # 'data/konect/out.com-dblp',
-    # 'data/konect/out.douban',
-    # 'data/konect/out.ego-facebook',
-    # 'data/konect/out.livemocha',
-    # 'data/konect/out.loc-brightkite_edges',
-    # 'data/konect/out.log-gowalla_edges',
-    # 'data/konect/out.maayan-pdzbase',
-    # 'data/konect/out.maayan-vidal',
-    # 'data/konect/out.moreno_propro_propro',
-    # 'data/konect/out.opsahl-powergrid',
-    # 'data/konect/out.petster-friendships-hamster-uniq',
-    # 'data/konect/out.petster-hamster',
-    # 'data/konect/out.reactome',
-    # 'data/konect/out.subelj_euroroad_euroroad',
-    # 'data/konect/out.tntp-ChicagoRegional',
-    # 'data/konect/out.wordnet-words'
+    'data/konect/out.arenas-email',  # 41 kb
+    'data/konect/out.arenas-jazz',  # 19 kb
+    'data/konect/out.arenas-pgp',  # 229 kb
+    'data/konect/out.as20000102',  # 114 kb
+    # 'data/konect/out.as-caida20071105',  # 500 kb
+    # 'data/konect/out.ca-AstroPh',  # 1944 kb
+    # 'data/konect/out.com-amazon',  # 11783 kb
+    # 'data/konect/out.com-dblp',  # 13096 kb
+    # 'data/konect/out.douban',  # 3945 kb
+    'data/konect/out.ego-facebook',  # 26 kb
+    # 'data/konect/out.livemocha',  # 26580 kb
+    # 'data/konect/out.loc-brightkite_edges', # 2225 kb
+    # 'data/konect/out.log-gowalla_edges',  # 10810 kb
+    'data/konect/out.maayan-pdzbase',  # 2 kb
+    'data/konect/out.maayan-vidal',  # 57 kb
+    'data/konect/out.moreno_propro_propro',  # 19 kb
+    'data/konect/out.opsahl-powergrid',  # 62 kb
+    'data/konect/out.petster-friendships-hamster-uniq',  # 99 kb
+    'data/konect/out.petster-hamster',  # 134 kb
+    # 'data/konect/out.reactome',  # 1456 kb
+    'data/konect/out.subelj_euroroad_euroroad',  # 12 kb
+    'data/konect/out.tntp-ChicagoRegional',  # 12 kb
+    # 'data/konect/out.wordnet-words'  # 7773 kb
 ]
 
 

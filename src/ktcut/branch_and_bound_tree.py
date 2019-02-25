@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 from ktcut.branch_and_bound_node import IsolationBranchingNode
 from ktcut.branch_and_bound_root import IsolationBranchingRoot
+import time
 
 
 class IsolationBranchingTree:
@@ -16,6 +17,8 @@ class IsolationBranchingTree:
         _best_upper_bound: the best feasible solution so far
         _done: if the algorithm terminated
         _active_node: the node which is currently being considered
+        _nodes_explored_count: total number of nodes explored
+        _start_time: when the branch and bound tree was initialized
     """
 
     def __init__(self, graph, terminals, terminals_by_vertex):
@@ -26,8 +29,9 @@ class IsolationBranchingTree:
         self._best_upper_bound = np.inf
         self._done = False
         self._all_nodes = None
-        self._active_node = None
-        self.nodes_explored_count = 0
+        self._active_node: IsolationBranchingNode = None
+        self._nodes_explored_count: int = 0
+        self._start_time = time.time()
 
     def _step(self):
         """One step of the branch-and-bound algorithm.
@@ -77,8 +81,9 @@ class IsolationBranchingTree:
         }
         return max(degrees_restricted, key=degrees_restricted.get)
 
+    @property
     def report(self):
-        report_items = {
+        return {
             "Source Set Sizes": {
                 terminal: len(self._active_node.graph.nodes[terminal]["combined"])
                 for terminal in self._terminals
@@ -91,9 +96,9 @@ class IsolationBranchingTree:
             ),
             "Best Lower Bound": self._best_lower_bound,
             "Best Upper Bound": self._best_upper_bound,
-            "Nodes Explored": self.nodes_explored_count
+            "Nodes Explored": self._nodes_explored_count,
+            "Time Elapsed": time.time() - self._start_time
         }
-        return report_items
 
     def solve(self, reporting=False):
         """Solves k-terminal cut using isolation branching.
@@ -108,9 +113,9 @@ class IsolationBranchingTree:
 
         while not self._done:
             self._step()
-            self.nodes_explored_count += 1
+            self._nodes_explored_count += 1
             if reporting:
-                print(self.report())
+                print(self.report)
 
         final_node_source_sets = {}
         for terminal in self._terminals:
