@@ -125,7 +125,7 @@ def test_graph_6():
     assert check_persistence(graph, terminals, 'strong')
 
 
-class SmallGraphs():
+class SmallGraphs:
 
     def __init__(self):
         self.graph = None
