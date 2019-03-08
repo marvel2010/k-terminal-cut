@@ -115,8 +115,14 @@ class IsolationBranchingTree:
             # if there are no unassigned vertices, we are at a leaf node
             self._done = True
 
-    def solve(self, reporting):
-        """Solves k-terminal cut using isolation branching.
+    def solve(self, reporting, time_limit=600):
+        """Solves k-terminal cut using Isolation Branching.
+
+        Args:
+            reporting: True if reports should be printed at every step of the
+                Isolation Branching algorithm.
+            time_limit: the time limit, in seconds, after which the algorithm
+                will terminate even if it does not reach an optimal solution.
 
         Returns:
             source_sets: the nodes that remain connected to each terminal
@@ -129,7 +135,7 @@ class IsolationBranchingTree:
         self._all_nodes = [first_node]
         self._unexplored_nodes = [first_node]
 
-        while not self._done:
+        while not self._done and time.time() - self._start_time < time_limit:
             self._step()
 
         # done

@@ -213,8 +213,6 @@ class IPFormulation:
         self._run_solver()
         self._calculate_cut_value()
         self._calculate_source_sets()
-        # self._calculate_possible_terminals_by_node_weak()
-        # self._calculate_possible_terminals_by_node_strong()
 
     def solve_lp(self):
         """Solves the Linear Program."""
