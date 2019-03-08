@@ -2,8 +2,8 @@
 import networkx as nx
 import numpy as np
 from typing import List
-from ktcut.branch_and_bound_node import IsolationBranchingNode
-from ktcut.branch_and_bound_root import IsolationBranchingRoot
+from ktcut.isolation_branching_node import IsolationBranchingNode
+from ktcut.isolation_branching_root import IsolationBranchingRoot
 import time
 
 
@@ -30,10 +30,11 @@ class IsolationBranchingTree:
         self._active_node: IsolationBranchingNode = None
         self._nodes_explored_count: int = 0
         self._start_time = time.time()
+        self._reporting = None
 
     @property
-    def best_lower_bound(self):
-        """The lowest lower bound among all nodes."""
+    def best_unexplored_lower_bound(self):
+        """The lowest lower bound among all unexplored nodes."""
         if self._unexplored_nodes:
             return min(node.lower_bound for node in self._unexplored_nodes)
         else:
@@ -85,10 +86,14 @@ class IsolationBranchingTree:
             (2) Select a Vertex
             (3) Branch
         """
-        if self.best_lower_bound < self.best_upper_bound:
+        if self.best_unexplored_lower_bound < self.best_upper_bound:
 
             # Select a Node
             self._active_node = self._pop_node_with_best_lower_bound()
+
+            # Reporting
+            if self._reporting:
+                print(self.report)
 
             # Select a Vertex
             unassigned_vertex_chosen = self._choose_unassigned_vertex_highest_degree()
@@ -110,13 +115,14 @@ class IsolationBranchingTree:
             # if there are no unassigned vertices, we are at a leaf node
             self._done = True
 
-    def solve(self, reporting=False):
+    def solve(self, reporting):
         """Solves k-terminal cut using isolation branching.
 
         Returns:
             source_sets: the nodes that remain connected to each terminal
             cut_value: the cost of the multi-terminal cut
         """
+        self._reporting = reporting
         self._root_node.initial_isolating_cuts()
         graph = self._root_node.get_graph()
         first_node = IsolationBranchingNode(graph, self._terminals, None, None)
@@ -125,11 +131,10 @@ class IsolationBranchingTree:
 
         while not self._done:
             self._step()
-            if reporting:
-                print(self.report)
 
         # done
         self._active_node = self._node_with_best_upper_bound()
+        print(self.report)
         final_node_source_sets = {}
         for terminal in self._terminals:
             if "combined" in self._active_node.graph.node[terminal]:
@@ -148,13 +153,13 @@ class IsolationBranchingTree:
                 terminal: len(self._active_node.graph.nodes[terminal]["combined"])
                 for terminal in self._terminals
             },
-            "Node Depth": self._active_node.depth,
-            "Node Lower Bound": self._active_node.lower_bound,
-            "Node Upper Bound": self._active_node.upper_bound,
-            "Total Unassigned Vertices": len(
+            "Active Node Depth": self._active_node.depth,
+            "Active Node Lower Bound": self._active_node.lower_bound,
+            "Active Node Upper Bound": self._active_node.upper_bound,
+            "Active Node Total Unassigned Vertices": len(
                 set(self._active_node.graph.nodes()) - set(self._terminals)
             ),
-            "Best Lower Bound": self.best_lower_bound,
+            "Best Unexplored Lower Bound": self.best_unexplored_lower_bound,
             "Best Upper Bound": self.best_upper_bound,
             "Nodes Unexplored": self.unexplored_nodes_count,
             "Nodes Total": self.total_nodes_count,

@@ -79,7 +79,7 @@ def main():
         information = {
             "Graph Name": dataset,
             "Vertex Count": len(graph_prime.nodes),
-            "Edge Count": len(graph_prime.nodes),
+            "Edge Count": len(graph_prime.edges),
             "Terminals": terminals,
             "Total Terminal Degree": total_degree
         }

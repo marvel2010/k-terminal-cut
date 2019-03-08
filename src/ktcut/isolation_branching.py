@@ -1,6 +1,6 @@
 """ Solves the k-Terminal Cut Problem with Isolation Branching. """
 from ktcut.lp_algorithm import lp_algorithm
-from ktcut.branch_and_bound_tree import IsolationBranchingTree
+from ktcut.isolation_branching_tree import IsolationBranchingTree
 
 
 def isolation_branching(graph, terminals, persistence=None, reporting=True):
