@@ -5,9 +5,8 @@ from sklearn.cluster import AffinityPropagation
 from sklearn import metrics
 
 
-def suggested_terminals(graph, terminal_count):
-    """
-    Suggests a set of terminal nodes for the given graph.
+def suggested_terminals_spectral(graph, terminal_count):
+    """Suggests a set of terminal vertices for the given graph.
 
     The terminals are suggested according to a two-step procedure.
         First, we perform a spectral clustering on the graph with
@@ -20,6 +19,7 @@ def suggested_terminals(graph, terminal_count):
 
     Returns:
         terminals: the suggested terminal vertices in the graph.
+        total_degree: total degree of the terminal vertices in the graph.
     """
     adj_matrix = nx.to_numpy_matrix(graph)
 
