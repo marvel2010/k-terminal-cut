@@ -42,3 +42,8 @@ def suggested_terminals_spectral(graph, terminal_count):
         terminals.append(maximizer[1])
 
     return terminals, total_degree
+
+
+def suggested_terminals_degree(graph, terminal_count):
+    degree_node = sorted([(d, n) for n, d in graph.degree()], reverse=True)
+    return [p[1] for p in degree_node[:terminal_count]], sum([p[0] for p in degree_node[:terminal_count]])

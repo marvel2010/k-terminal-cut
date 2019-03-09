@@ -10,7 +10,8 @@ import numpy as np
 import networkx as nx
 
 from ktcut.ip_algorithm import ip_algorithm
-from ktcut.spectral_clustering import suggested_terminals
+from ktcut.suggested_terminals import suggested_terminals_spectral
+from ktcut.suggested_terminals import suggested_terminals_degree
 from ktcut.isolation_branching import isolation_branching
 from ktcut.read_data import read_dimacs_graph
 from ktcut.read_data import read_konect_graph
@@ -18,45 +19,40 @@ from ktcut.read_data import read_konect_graph
 from pulp import GUROBI
 
 DIMACS_DATASETS = [
-    # 'data/dimacs/adjnoun.graph',  # bad with 10
+    'data/dimacs/adjnoun.graph',
     'data/dimacs/polbooks.graph',
-    # 'data/dimacs/football.graph',  # unclear with 10
-    # 'data/dimacs/netscience.graph',  # old
-    # 'data/dimacs/celegans_metabolic.graph',  # old
-    'data/dimacs/jazz.graph',  # unclear with 10
-    # 'data/dimacs/email.graph',
-    # 'data/dimacs/power.graph',  # old
-    # 'data/dimacs/hep-th.graph',  # old
-    # 'data/dimacs/polblogs.graph',
-    # 'data/dimacs/PGPGiantcompo.graph',  # old
-    # 'data/dimacs/as-22july06.graph',  # old
-    # 'data/dimacs/astro-ph.graph'  # old
+    'data/dimacs/netscience.graph',
+    'data/dimacs/celegans_metabolic.graph',
+    'data/dimacs/hep-th.graph',
+    'data/dimacs/polblogs.graph',
+    'data/dimacs/as-22july06.graph',
+    'data/dimacs/astro-ph.graph'
 ]
 
 KONECT_DATASETS = [
-    'data/konect/out.arenas-email',  # 41 kb
-    'data/konect/out.arenas-jazz',  # 19 kb
-    'data/konect/out.arenas-pgp',  # 229 kb
-    'data/konect/out.as20000102',  # 114 kb
+    # 'data/konect/out.maayan-pdzbase',  # 2 kb
+    # 'data/konect/out.subelj_euroroad_euroroad',  # 12 kb
+    # 'data/konect/out.tntp-ChicagoRegional',  # 12 kb
+    # 'data/konect/out.arenas-jazz',  # 19 kb
+    # 'data/konect/out.moreno_propro_propro',  # 19 kb
+    # 'data/konect/out.ego-facebook',  # 26 kb
+    # 'data/konect/out.maayan-vidal',  # 57 kb
+    # 'data/konect/out.arenas-email',  # 41 kb
+    # 'data/konect/out.opsahl-powergrid',  # 62 kb
+    # 'data/konect/out.petster-friendships-hamster-uniq',  # 99 kb
+    # 'data/konect/out.as20000102',  # 114 kb
+    # 'data/konect/out.petster-hamster',  # 134 kb
+    # 'data/konect/out.arenas-pgp',  # 229 kb
     # 'data/konect/out.as-caida20071105',  # 500 kb
-    # 'data/konect/out.ca-AstroPh',  # 1944 kb
-    # 'data/konect/out.com-amazon',  # 11783 kb
-    # 'data/konect/out.com-dblp',  # 13096 kb
-    # 'data/konect/out.douban',  # 3945 kb
-    'data/konect/out.ego-facebook',  # 26 kb
-    # 'data/konect/out.livemocha',  # 26580 kb
-    # 'data/konect/out.loc-brightkite_edges', # 2225 kb
-    # 'data/konect/out.log-gowalla_edges',  # 10810 kb
-    'data/konect/out.maayan-pdzbase',  # 2 kb
-    'data/konect/out.maayan-vidal',  # 57 kb
-    'data/konect/out.moreno_propro_propro',  # 19 kb
-    'data/konect/out.opsahl-powergrid',  # 62 kb
-    'data/konect/out.petster-friendships-hamster-uniq',  # 99 kb
-    'data/konect/out.petster-hamster',  # 134 kb
     # 'data/konect/out.reactome',  # 1456 kb
-    'data/konect/out.subelj_euroroad_euroroad',  # 12 kb
-    'data/konect/out.tntp-ChicagoRegional',  # 12 kb
-    # 'data/konect/out.wordnet-words'  # 7773 kb
+    # 'data/konect/out.ca-AstroPh',  # 1944 kb
+    'data/konect/out.loc-brightkite_edges',  # 2225 kb
+    'data/konect/out.douban',  # 3945 kb
+    'data/konect/out.wordnet-words'  # 7773 kb
+    'data/konect/out.log-gowalla_edges',  # 10810 kb
+    'data/konect/out.com-amazon',  # 11783 kb
+    'data/konect/out.com-dblp',  # 13096 kb
+    'data/konect/out.livemocha',  # 26580 kb
 ]
 
 
@@ -75,7 +71,7 @@ def main():
         largest_cc = max(nx.connected_components(graph), key=len)
         graph_prime = graph.subgraph(largest_cc).copy()
         # Suggest Terminals
-        terminals, total_degree = suggested_terminals(graph_prime, 5)
+        terminals, total_degree = suggested_terminals_degree(graph_prime, 5)
         information = {
             "Graph Name": dataset,
             "Vertex Count": len(graph_prime.nodes),
@@ -119,8 +115,8 @@ def time_test_synthetic_repeated(model_name,
         graph, _ = create_random_graph(model_name=model_name,
                                        node_count=node_count,
                                        terminal_count=terminal_count)
-        terminals, _ = suggested_terminals(graph=graph,
-                                           terminal_count=terminal_count)
+        terminals, _ = suggested_terminals_spectral(graph=graph,
+                                                    terminal_count=terminal_count)
         print(len(graph.nodes), len(graph.edges))
 
         time_bb, time_bb_weak, time_bb_strong, time_ip_cbc, time_ip_gurobi = time_test_simple(graph,
@@ -208,7 +204,7 @@ def time_test_simple(graph,
     t5 = time.time()
 
     if test_ip_gurobi:
-        ip_algorithm(graph.copy(), terminals, solver=GUROBI(msg=False))
+        ip_algorithm(graph.copy(), terminals, solver=GUROBI(msg=True))
 
     t6 = time.time()
 
