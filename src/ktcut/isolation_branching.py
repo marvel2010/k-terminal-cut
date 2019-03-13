@@ -3,7 +3,7 @@ from ktcut.lp_algorithm import lp_algorithm
 from ktcut.isolation_branching_tree import IsolationBranchingTree
 
 
-def isolation_branching(graph, terminals, persistence=None, reporting=True):
+def isolation_branching(graph, terminals, persistence=None, reporting=True, time_limit=600):
     """Solves k-Terminal Cut for given graph and terminals.
 
     The k-terminal cut partitions the graph into k sets
@@ -18,6 +18,8 @@ def isolation_branching(graph, terminals, persistence=None, reporting=True):
         terminals: the terminals of the networkx graph
         persistence: if persistence is assumed [strong, weak, None]
         reporting: if the branching solver should print results as it goes
+        time_limit: the time after which to terminate,
+            even if the optimal solution has not yet been reached.
 
     Returns:
         source_sets: the partition of the nodes of the graph which defines the minimum cut
@@ -39,6 +41,6 @@ def isolation_branching(graph, terminals, persistence=None, reporting=True):
         graph, terminals=terminals, terminals_by_vertex=terminals_by_vertex
     )
 
-    source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting)
+    source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting, time_limit=time_limit)
 
     return source_sets, cut_value, branch_and_bound_tree.report

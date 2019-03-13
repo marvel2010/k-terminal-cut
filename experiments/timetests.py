@@ -59,8 +59,8 @@ KONECT_DATASETS = [
 def main():
 
     model = "powerlaw_cluster"
-    for size in range(4000, 11000, 1000):
-        time_test_synthetic_repeated(model, size, 5, repeat=10)
+    for size in range(8000, 11000, 1000):
+        time_test_synthetic_repeated(model, size, 5, repeat=5)
 
     # # graph_reader = read_dimacs_graph
     # graph_reader = read_konect_graph
@@ -217,7 +217,7 @@ def time_test_simple(
 
     ib_rpt = None
     if test_bb:
-        _, _, ib_rpt = isolation_branching(graph.copy(), terminals, reporting=False)
+        _, _, ib_rpt = isolation_branching(graph.copy(), terminals, reporting=False, time_limit=3600)
 
     t2 = time.time()
 
