@@ -22,6 +22,7 @@ def isolation_branching(graph, terminals, persistence=None, reporting=True):
     Returns:
         source_sets: the partition of the nodes of the graph which defines the minimum cut
         cut_value: the weight of the optimal multi-terminal cut
+        report: the final values in the Isolation Branching tree
     """
     for u, v in graph.edges:
         if "capacity" in graph[u][v]:
@@ -40,4 +41,4 @@ def isolation_branching(graph, terminals, persistence=None, reporting=True):
 
     source_sets, cut_value = branch_and_bound_tree.solve(reporting=reporting)
 
-    return source_sets, cut_value
+    return source_sets, cut_value, branch_and_bound_tree.report

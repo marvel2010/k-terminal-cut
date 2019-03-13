@@ -29,7 +29,7 @@ def test_graph_1():
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(1)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = isolation_branching(graph, terminals)
+    _, cut_value, _ = isolation_branching(graph, terminals)
     assert cut_value == 8
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 8
@@ -47,7 +47,7 @@ def test_graph_2():
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(2)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = isolation_branching(graph, terminals)
+    _, cut_value, _ = isolation_branching(graph, terminals)
     assert cut_value == 8
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 8
@@ -65,7 +65,7 @@ def test_graph_3():
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(3)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = isolation_branching(graph, terminals)
+    _, cut_value, _ = isolation_branching(graph, terminals)
     assert cut_value == 26
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 26
@@ -83,7 +83,7 @@ def test_graph_4():
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(4)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = isolation_branching(graph, terminals)
+    _, cut_value, _ = isolation_branching(graph, terminals)
     assert cut_value == 27
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 27
@@ -99,7 +99,7 @@ def test_graph_5():
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(5)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = isolation_branching(graph,
+    _, cut_value, _ = isolation_branching(graph,
                                        terminals,
                                        persistence='strong')
     assert cut_value == 110
@@ -115,7 +115,7 @@ def test_graph_6():
     test_graphs = SmallGraphs()
     test_graphs.set_test_graph(6)
     graph, terminals = test_graphs.get_graph(), test_graphs.get_terminals()
-    _, cut_value = isolation_branching(graph, terminals)
+    _, cut_value, _ = isolation_branching(graph, terminals)
     assert cut_value == 27
     _, cut_value = ip_algorithm(graph, terminals)
     assert cut_value == 27

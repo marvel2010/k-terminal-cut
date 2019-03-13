@@ -6,4 +6,4 @@ def test_graph_tutte():
     from ktcut.isolation_branching import isolation_branching
     graph = tutte_graph()
     terminals = [1, 17, 34]
-    partition, cut_value = isolation_branching(graph, terminals)
+    partition, cut_value, _ = isolation_branching(graph, terminals)
